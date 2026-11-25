@@ -14,4 +14,4 @@
 
 - `measure_plan.py`・`cut_resume.py`・`--set-times` は機器の測定時間を書き換える。終わったら元に戻す(2026-11-13 時点: Mudrock Air 10+10・Obsidian 15・Glass Dual 30+50・Spectrometer Mode 10)。
 - `measure_plan.py`・`cut_resume.py` は本物の `config/measure_log.csv` に行を足す。
-- `gui_stop.py`(Tk 版の画面で狙った瞬間に「停止」を押す)は 2026-11-20 に Tk 版と一緒に削除した(控えは `backup_tk_2026-11-20/tests/realdevice/`)。
+- `gui_stop.py`(Tk 版の画面で狙った瞬間に「停止」を押す)は 2026-11-20 に Tk 版と一緒に削除した(控えは `archive/backup_tk_2026-11-20/tests/realdevice/`)。

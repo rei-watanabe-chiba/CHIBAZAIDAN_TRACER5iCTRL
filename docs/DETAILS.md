@@ -14,7 +14,6 @@ TRACERexl/                  開発用(このフォルダ)
     src/                    ソースコード(コマンドはこのフォルダで実行する)
     config/                 初回起動で自動作成: 設定・実行記録・異常時の画面(last_error.png)・診断画像(remotectrl_test/)
     TracerData/             初回起動で自動作成: 保存先(固定・変更不可)。File.csv / Results.csv / pdz/
-  config/ / TracerData/     Traer5iAuto へ移す前のデータ(2026-11-09 分)。今のアプリは読まない
   tests/                    テスト(配布しない。TRACERexl で `python tests/...` と実行。Traer5iAuto/src を読み込む)
                             sensor/: 蓋の磁気センサー(USB 413d:2107、スイッチ 2 = F24 に書き換え済み・抜き差しと再起動でも残る。磁石が近いと F24 を押したまま = オン)の確認用。sensor_config.py(割り当ての読み書き)・sensor_monitor.py(オン / オフを見る窓)
                             realdevice/: 実機の確認用スクリプト(照射するものあり。使い方は中の README.md)
@@ -23,10 +22,14 @@ TRACERexl/                  開発用(このフォルダ)
                             demo_device.py: 偽の機器(DemoDevice・DemoOperator・install。デモとテストが使う)
                             build_exe.py: 配布用 exe の作成(PyInstaller・フォルダ形式)。dist/ と build/ を TRACERexl 直下に作る
   requirements.txt          Python パッケージ
-  CLAUDE.md / CHANGELOG.md / PROTOCOL_55000.md / .claude/
-  WEBVIEW_CHECK.md          WebView2 版を実機で確かめた手順(2026-11-20。確かめて Tk 版を消した)
-  backup_tk_2026-11-20/     消した Tk 版の控え(src・tests・VBS・requirements・CLAUDE.md。今のアプリは読まない)
-  LID_SENSOR.md             蓋の磁気センサー(調べたこと・決まり・作り・決めごと)。**蓋が閉じていなければ照射しない**(下の「安全ルール」)
+  CLAUDE.md / CHANGELOG.md / .claude/
+  docs/                     資料(このファイル・PROTOCOL_55000.md・PROTOCOL_55100.md・messages_review.csv など)
+    WEBVIEW_CHECK.md        WebView2 版を実機で確かめた手順(2026-11-20。確かめて Tk 版を消した)
+    LID_SENSOR.md           蓋の磁気センサー(調べたこと・決まり・作り・決めごと)。**蓋が閉じていなければ照射しない**(下の「安全ルール」)
+  archive/                  git の外。今のアプリは読まない(2026-11-25 に整理)
+    backup_tk_2026-11-20/   消した Tk 版の控え(src・tests・VBS・requirements・CLAUDE.md)
+    snapshot_2026-11-20/    Tk 版から切り替える途中の Traer5iAuto(元の buckup/)
+    data_2026-11-09/        Traer5iAuto へ移す前の config・TracerData(2026-11-09 分)
   Software and Firmware/    Bruker 付属物。触らない
 ```
 - 下の表の `src/...`・`config/...` は `Traer5iAuto/` からの位置。

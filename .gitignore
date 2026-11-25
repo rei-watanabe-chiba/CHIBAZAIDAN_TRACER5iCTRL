@@ -11,9 +11,8 @@ build/
 dist/
 *.spec
 
-# 控え(git で管理するので不要)
-backup_tk_2026-11-20/
-buckup/
+# 控え・古いデータ(git の外に置く)
+archive/
 
 # Bruker 付属物(再配布しない)
 Software and Firmware/

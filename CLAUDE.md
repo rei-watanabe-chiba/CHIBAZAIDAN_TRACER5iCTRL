@@ -12,11 +12,10 @@ TRACERexl/                  開発用(このフォルダ)
     start_measure_gui.vbs   起動用(`pythonw src/web_app.py`)。ASCII・CRLF。相対パスの基準
     src/                    ソース(コマンドはこのフォルダで実行する)
     config/  TracerData/    初回起動で自動作成(設定・台帳・ログ / 保存先 File.csv・Results.csv・pdz/)
-  config/ / TracerData/     移す前の古いデータ(今のアプリは読まない)
-  tests/                    テスト(配布しない。TRACERexl で `python tests/...`)。sensor/・realdevice/(照射するものあり)・demo_web.py・demo_device.py・fake_device.py・build_exe.py
-  docs/DETAILS.md           決まりの細部(元の CLAUDE.md の全文)
-  CHANGELOG.md / PROTOCOL_55000.md / PROTOCOL_55100.md / LID_SENSOR.md / WEBVIEW_CHECK.md / messages_review.csv
-  backup_tk_2026-11-20/     消した Tk 版の控え(読まない)
+  tests/                    テスト(配布しない。TRACERexl で `python tests/...`)。sensor/・realdevice/(照射するものあり)・demo_web.py・demo_device.py・fake_device.py・build_exe.py(build/・dist/ を直下に作る)
+  docs/                     資料。DETAILS.md(決まりの細部)・PROTOCOL_55000.md・PROTOCOL_55100.md・LID_SENSOR.md・WEBVIEW_CHECK.md・messages_review.csv(ユーザーが編集する文言の一覧)
+  archive/                  git の外。読まない。backup_tk_2026-11-20/(Tk 版)・snapshot_2026-11-20/(切り替えの途中の Traer5iAuto)・data_2026-11-09/(移す前の config・TracerData)
+  CHANGELOG.md / requirements.txt
   Software and Firmware/    Bruker 付属物。触らない
 ```
 
@@ -50,7 +49,7 @@ CLI(`auto_measure.py`): `--check` / `--login` / `--switch-only "App"` / `--set-t
   - 例外は無い。放射線の注意の画面(「トリガを引いて放すと続行します」)も、アプリからは送らない(本体のトリガーを手で引いて放す)。
 - **PASS をエージェントが入力しない。** 読み出して表示・送信しない。
 - **画像を溜めない。** キャプチャはメモリ上だけ。保存するのは `config/last_error.png`(上書き)と、見本に無い画面(`config/new_screens/`、最大 40 枚)だけ。
-- **蓋が閉じていなければ照射しない**(LID_SENSOR.md)。センサーが無い・読めないときも照射しない(外す設定は作らない)。照射中に蓋が開いたらすぐトリガーを離す。
+- **蓋が閉じていなければ照射しない**([docs/LID_SENSOR.md](docs/LID_SENSOR.md))。センサーが無い・読めないときも照射しない(外す設定は作らない)。照射中に蓋が開いたらすぐトリガーを離す。
 - 機器の表示設定(ズームなど)を変えたら元に戻す(既定は 1X、コマンド 104)。
 - **プロトコルが分からないポートへ、ユーザーの同意なしにデータを送らない。** `$TS` は照射なので絶対に送らない。
 - テストでは本物の `config/`・台帳・機器・蓋のセンサーに触れない。設定のパス(`WebApp(settings_path=…)`)・`am.LOG_CSV`・`am.ERROR_PNG`・`am.TRACER_DIR`・`am.LEDGER_STORE` を一時フォルダへ、機器は偽の機器(`tests/demo_device.py` の `install`・`device_core.connect_link` / `find_devices` の差し替え)、センサーは `lid_sensor._SENSOR = lid_sensor.Fixed`。
@@ -59,7 +58,7 @@ CLI(`auto_measure.py`): `--check` / `--login` / `--switch-only "App"` / `--set-t
 ## 機器とつなぎ方(要点。細部は DETAILS.md「機器のネットワーク」「機器の操作の仕組み」)
 
 - 機器は 192.168.137.139 が多いが**アドレスは固定しない**: USB の ID `USB\VID_226B` と名前「Bruker S1 Titan」で接続を探し、その接続の DHCP サーバーが機器、送り元はその接続の PC 側のアドレスに固定する(Wi-Fi 側へ流さないため)。
-- 55102 = 画面(480x640 RGB565)とクリック・生存の知らせ / 55101 = トリガーの状態 / 55100 = トリガーの命令 / 55000 = ファイル(PROTOCOL_55100.md・PROTOCOL_55000.md)。機器は同時に 1 つの相手としかつながらない(RemoteCTRL・Instrument Tools は閉じておく)。
+- 55102 = 画面(480x640 RGB565)とクリック・生存の知らせ / 55101 = トリガーの状態 / 55100 = トリガーの命令 / 55000 = ファイル([docs/PROTOCOL_55100.md](docs/PROTOCOL_55100.md)・[docs/PROTOCOL_55000.md](docs/PROTOCOL_55000.md))。機器は同時に 1 つの相手としかつながらない(RemoteCTRL・Instrument Tools は閉じておく)。
 - つなぎ直すときは**前と同じ PC 側のポート番号**を使う(新しい番号では数分断られる)。切れた接続はすぐ捨てる。
 - GUI でつなぐのは本体画面の「接続」だけ(同じ製造番号の機器が戻れば自動でつなぎ直す)。GUI でログインするのは「ログイン」ボタンだけ。
 - 画面は見本との照合で読む。読めない画面は unknown で、測定は先へ進まない。

@@ -4,6 +4,13 @@
 
 ## 2026-11-25
 
+### 整理: フォルダを整理する
+- 整理: 資料(`PROTOCOL_55000.md`・`PROTOCOL_55100.md`・`LID_SENSOR.md`・`WEBVIEW_CHECK.md`・`messages_review.csv`)を `docs/` へ移した。
+- 整理: 控えと古いデータを `archive/`(git の外)にまとめた。`backup_tk_2026-11-20/` → `archive/backup_tk_2026-11-20/`、`buckup/Traer5iAuto/` → `archive/snapshot_2026-11-20/`、直下の `config/`・`TracerData/`(2026-11-09 分)→ `archive/data_2026-11-09/`。
+- 削除: 作り直せるもの(`build/`・`dist/`・`Traer5iAuto/config/webview/`(WebView2 のキャッシュ。次の起動で作られる)・`__pycache__/`)と、空の `Traer5iAuto/x`・`Traer5iAuto/boot_frames/`。
+- 変更: CLAUDE.md・DETAILS.md のファイル構成とリンク、`.gitignore`(`archive/`)を合わせた。
+- コードは変えていない。core_test 51/51・measure_logic_test 202/202 OK。
+
 ### 追加: git で管理し GitHub へ置く
 - 追加: TRACERexl を git で管理し、GitHub の公開リポジトリ `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`(main)へ push した。
 - 追加: `.gitignore`(実行時のデータ `config/`・`TracerData/`、`build/`・`dist/`、控えのフォルダ、`Software and Firmware/`、借用一覧の CSV、`__pycache__/` を外す)と `.gitattributes`(VBS は CRLF のまま)。
