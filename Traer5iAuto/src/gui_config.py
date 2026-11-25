@@ -325,7 +325,7 @@ class UI:
     CLOSE_CONFIRM_TEXT = "測定中です。照射を止めて終了しますか?"
     # 閉じるときにトリガーを離せなかったときの知らせ
     CLOSE_FAIL_TITLE = "照射を止められませんでした"
-    CLOSE_FAIL_TEXT = "トリガーを離せませんでした。機器のトリガー(または RemoteCTRL の F6)で照射を止めてください。"
+    CLOSE_FAIL_TEXT = "トリガーを離せませんでした。機器のトリガーで照射を止めてください。"
     # 窓(web_app.py と web/。2026-11-20 に Tk 版から切り替えた)
     WEB_TITLE = TITLE
     WEB_BG = "#f0f0f0"              # 窓の地(WINDOW_BG = SystemButtonFace と同じ色。窓が広がって描く前の所もこの色)

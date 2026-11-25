@@ -4,8 +4,8 @@
   55101: トリガーの状態の知らせを受け取る(TRIGGER_RELEASED / NOT_READY / PULLED)
   55100: トリガーの命令を送る(TRIGGER_PULL / TRIGGER_RELEASE。返事 OK)。**TRIGGER_PULL は X線照射**
 
-DirectRemote は bruker_ui.RemoteCtrl と同じ使い方(capture_background / read_ui / to_client / click /
-trigger_state / trigger)ができるので、auto_measure.Operator はどちらでも動く。画面は見本との照合で読む(OCR なし)。
+DirectRemote(capture_background / read_ui / to_client / click / trigger_state / trigger)を auto_measure.Operator が使う。
+画面は見本との照合で読む(OCR なし)。
 機器は同時に1つの相手としかつながらない(このアプリがつないでいる間は RemoteCTRL はつなげない)。
 """
 from __future__ import annotations
@@ -15,7 +15,7 @@ import ctypes, os, socket, struct, threading, time
 from PIL import Image
 
 import screen_match
-from bruker_ui import REF_W, ScreenUI
+from screen_ui import REF_W, ScreenUI
 
 HOST = "192.168.137.139"
 PORT_SCREEN, PORT_STATUS, PORT_COMMAND = 55102, 55101, 55100
@@ -626,8 +626,8 @@ SETTLE_S = 0.25           # 更新が届き始めてから、続きを待つ時�
 
 
 class DirectRemote:
-    """bruker_ui.RemoteCtrl と同じ使い方で、直接つないだ機器を操作する(auto_measure.Operator から使う)。
-    画像は 200% 表示の RemoteCTRL と同じ形(機器の画面を縦横2倍、最近傍)にして、今の画面解析をそのまま使う"""
+    """直接つないだ機器を操作する(auto_measure.Operator から使う)。
+    画像は機器の画面を縦横2倍(最近傍)にした形で渡す(座標は基準の 960 幅。screen_ui.REF_W)"""
 
     SCALE = 2
 
@@ -645,9 +645,6 @@ class DirectRemote:
         self.link, self._clicked_at = link, None
         return True
 
-    def content_width(self) -> int:
-        return self.link.width * self.SCALE
-
     def capture_background(self) -> Image.Image:
         """最新の画面。クリックの後だけ、画面の更新が届くまで待つ(変わらない画面では待たない)"""
         if self.link.error:
@@ -661,7 +658,7 @@ class DirectRemote:
         img = self.link.snapshot()
         return img.resize((img.width * self.SCALE, img.height * self.SCALE), Image.NEAREST)
 
-    def read_ui(self, img: Image.Image | None = None, content_w: int | None = None) -> ScreenUI:
+    def read_ui(self, img: Image.Image | None = None) -> ScreenUI:
         """画面を見本との照合で読む(screen_match。OCR は使わない)。見本で読めない画面は、そのまま返し
         (状態は unknown になり、測定の処理は先へ進まずに止まる)、見本を足すために残す(NEW_SCREENS_DIR、最大 NEW_SCREENS_MAX 枚)"""
         img = img or self.capture_background()
@@ -688,7 +685,7 @@ class DirectRemote:
         return {"released": "pull", "pulled": "release"}.get(self.link.status, "unknown")
 
     def trigger(self):
-        """RemoteCTRL のメニュー(F6)と同じく、照射中なら止め、そうでなければ照射を始める"""
+        """照射中なら止め、そうでなければ照射を始める"""
         if self.link.status == "pulled":
             self.link.release()
         else:

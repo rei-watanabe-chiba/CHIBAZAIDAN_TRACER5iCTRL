@@ -17,6 +17,13 @@ from __future__ import annotations
 
 import atexit, base64, ctypes, io, json, os, queue, sys, threading, time, traceback
 
+# 窓を作る前に、画面ごとの DPI に合わせる(2 = PROCESS_PER_MONITOR_DPI_AWARE)。窓の大きさ・位置・小窓の配置は物理の px で
+# 扱っている。前は bruker_ui を読み込んだときについでに設定されていた(2026-11-25 に bruker_ui を消したのでここで設定する)
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
+except Exception:
+    pass
+
 import auto_measure as am
 import device_link as dl
 from app_rules import choose_zoom, mini_parts, place_in, status_look, toggle_mini

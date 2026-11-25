@@ -8,7 +8,6 @@
         照射時間は進捗表示と確認間隔の目安。機器が自動停止して結果画面になるまで確認を続ける
         --yes      : 開始時の確認プロンプトを省略
 
-    python auto_measure.py ... --remotectrl             # 予備: 機器へ直接つながず、RemoteCTRL の窓を相手にする
     python auto_measure.py --check                      # 画面状態を読むだけ(入力なし)
     python auto_measure.py --switch-only "Mudrock Air"   # アプリ切替だけ実行(F6なし・照射なし)
     python auto_measure.py --set-times "Glass Dual=15+60" # 測定時間を機器に書き込むだけ(照射なし)
@@ -25,7 +24,7 @@ from __future__ import annotations
 
 import csv, os, re, sys, threading, time
 
-from bruker_ui import RemoteCtrl, ScreenUI, UIElement, same_name
+from screen_ui import ScreenUI, UIElement, same_name
 
 # フォルダは start_measure_gui.vbs のフォルダを基準にした相対パス(storage.py)
 from storage import ERROR_PNG, LEDGER_STORE, LOG_CSV, SETTINGS, TRACER_DIR, ensure_parent, load_settings, use_base  # noqa: F401
@@ -46,7 +45,7 @@ class DeviceError(AbortError):
 
 
 class OcrError(AbortError):
-    kind = "ocr"             # 画面の文字やボタンを読めない(読み直しを試したあと。窓が隠れている・最小化など)
+    kind = "ocr"             # 画面の文字やボタンを見本と照合できない(読み直しを試したあと。名前は前の OCR のまま)
 
 
 class LoginWait(AbortError):
@@ -113,8 +112,8 @@ def lid_opened():
 
 def _release_now(op, t_open: float):
     """(別の糸)照射中なら、すぐ止める命令を送る(測定の糸は画面を読んでいる途中だと遅れるため)。止めるだけで、照射を
-    始める方へは送らない。遅れの内訳(命令まで・OK まで・離れた知らせまで)をログのファイルに残す。RemoteCTRL の窓が
-    相手のときは何もしない(測定の糸が止める)"""
+    始める方へは送らない。遅れの内訳(命令まで・OK まで・離れた知らせまで)をログのファイルに残す。接続が無い相手
+    (テストの偽物など)なら何もしない(測定の糸が止める)"""
     link = getattr(getattr(op, "rc", None), "link", None)
     if link is None or link.status != "pulled":
         return
@@ -135,7 +134,7 @@ def stop_irradiation(op):
     rc = getattr(op, "rc", None)
     if rc is not None and hasattr(rc, "release"):
         rc.release()
-    elif op.trigger_state() == "release":          # RemoteCTRL の窓(メニューは切り替えだけ)・テストの偽物
+    elif op.trigger_state() == "release":          # テストの偽物(trigger は切り替えだけ)
         op.trigger()
 
 
@@ -190,32 +189,22 @@ def screen_state(ui: ScreenUI) -> str:
 
 # ================================================================ 操作
 class Operator:
-    """RemoteCTRL への入力と画面判定。座標は毎回その場で解析し、現在の窓サイズへ換算する"""
+    """機器への入力と画面判定(機器へ直接つなぐ: device_link.DirectRemote)。座標は毎回その場で解析する"""
 
     def __init__(self):
-        # 画面の読み取り・クリック・トリガーの相手: "direct" = 機器へ直接つなぐ(device_link) / "remotectrl" = RemoteCTRL の窓
-        if BACKEND == "direct":
-            from device_link import DirectRemote
-            self.rc = DirectRemote()
-        else:
-            self.rc = RemoteCtrl()
+        from device_link import DirectRemote
+        self.rc = DirectRemote()
         self.ui: ScreenUI | None = None
 
     # ---- 画面
     def read(self) -> ScreenUI:
-        if hasattr(self.rc, "prepare"):
-            self.rc.prepare()                             # RemoteCTRL: 起動し直し・最小化に追従
-        img = self.rc.capture_background()
-        if img.width < self.rc.content_width() - 2:       # 窓が機器の画面より狭いと右側が切れて読めない
-            raise OcrError("RemoteCTRL の窓が機器の画面より小さく、右側が切れています")
-        self.ui = self.rc.read_ui(img)
-        if BACKEND == "direct":                           # 描きかけ(遷移の途中)の画面なら、少し待って読み直す
-            from screen_match import recognized
-            for _ in range(SETTLE_RETRY):
-                if recognized(self.ui):
-                    break
-                _sleep(SETTLE_S)
-                self.ui = self.rc.read_ui(self.rc.capture_background())
+        from screen_match import recognized
+        self.ui = self.rc.read_ui(self.rc.capture_background())
+        for _ in range(SETTLE_RETRY):                     # 描きかけ(遷移の途中)の画面なら、少し待って読み直す
+            if recognized(self.ui):
+                break
+            _sleep(SETTLE_S)
+            self.ui = self.rc.read_ui(self.rc.capture_background())
         return self.ui
 
     def state(self, ui: ScreenUI | None = None) -> str:
@@ -242,13 +231,13 @@ class Operator:
         b = ui.find_button("アプリケーション", 0.8)
         return b.text.replace("アプリケーション", "").strip() if b else ""
 
-    # ---- トリガー(RemoteCTRL: メニュー「Trigger Pull/Release ( F6 )」/ 直接: 55100 の TRIGGER_PULL / RELEASE)
+    # ---- トリガー(55100 の TRIGGER_PULL / RELEASE)
     def trigger_state(self) -> str:
         """'pull'(引ける=待機) / 'release'(引いている) / 'unknown'"""
         return self.rc.trigger_state()
 
     def trigger(self):
-        """照射中なら止め、そうでなければ照射を始める(F6 と同じ)"""
+        """照射中なら止め、そうでなければ照射を始める"""
         self.rc.trigger()
         time.sleep(0.5)
 
@@ -285,9 +274,8 @@ class Operator:
             return self.wait_state(want, timeout)
 
     def click_elem(self, ui: ScreenUI, e, wait: float = 0.25):
-        """解析済み画面の要素をクリック。窓へ直接クリックメッセージを送る
-        (前面化不要・実マウスを動かさないので誤タップしない)"""
-        cx, cy = self.rc.to_client(ui, e.center)          # 基準座標 → 窓 / 機器の画面の座標
+        """解析済み画面の要素をクリック(機器へクリックを送る。実マウスは動かさない)"""
+        cx, cy = self.rc.to_client(ui, e.center)          # 基準座標 → 機器の画面の座標
         self.rc.click(cx, cy)
         self.ui = None
         time.sleep(wait)
@@ -301,7 +289,6 @@ class Operator:
 
 
 # ================================================================ ログイン
-BACKEND = "direct"       # 画面・入力・トリガーの相手: "direct"(機器へ直接つなぐ。device_link)/ "remotectrl"(RemoteCTRL の窓。CLI の --remotectrl)
 PASSCODE = ""          # ログイン画面で入力する PASS(半角数字)。CLI(--login / --plan)だけが使う。GUI は「ログイン」ボタンで login() を直接呼ぶ
 KEYPAD_LABELS = "123456789C0D"   # テンキーの並び(C=CLR, D=DEL) 3列×4行
 
@@ -469,13 +456,8 @@ def _as_number(text: str) -> float | None:
         return None
 
 
-FIELD_INSET = 8              # 時間の欄だけを読み直すとき、欄の外側をこれだけ削る(枠の線を OCR に入れない)
-
-
-def field_value(ui: ScreenUI, f: UIElement, ocr=None) -> float | None:
-    """入力欄に表示されている数値(読めなければ None)。
-    画面全体の OCR では欄の枠に邪魔されて数字を拾えないことがある(2026-11-10 実機: 取り込み中の「15」)。
-    ocr を渡すと、そのときは欄の内側だけを切り出し、白い余白を付けて読み直す"""
+def field_value(ui: ScreenUI, f: UIElement) -> float | None:
+    """入力欄に表示されている数値(読めなければ None。欄の数字は screen_match が字形で読んで文字にしている)"""
     cx, cy = f.center
     for t in ui.texts:
         tx, ty = t.center
@@ -483,13 +465,7 @@ def field_value(ui: ScreenUI, f: UIElement, ocr=None) -> float | None:
             v = _as_number(t.text)
             if v is not None:
                 return v
-    if ocr is None or ui.image is None:
-        return None
-    from PIL import ImageOps
-    x, y, w, h = f.rect
-    d = FIELD_INSET
-    crop = ui.image.crop((x + d, y + d, x + w - d, y + h - d)).convert("L")
-    return _as_number(" ".join(t for t, _ in ocr.lines(ImageOps.expand(crop, 30, fill=255))))
+    return None
 
 
 def _keypad_tap(op: Operator, ui: ScreenUI, fx: float, fy: float):
@@ -571,14 +547,13 @@ def set_phase_times(op: Operator, app: str, phases: list[float]) -> bool:
         raise DeviceError(f"{app}: 機器のフェーズ数は {len(fields)} 個、測定モードの設定は {len(phases)} 個です")
     changes = []
     for k, want in enumerate(phases):
-        ocr = getattr(getattr(op, "rc", None), "ocr", None)   # 画面全体で読めなければ欄だけを読み直す
-        cur = field_value(ui, fields[k], ocr)
+        cur = field_value(ui, fields[k])
         if cur is not None and abs(cur - want) < 1e-6:
             continue
         for attempt in range(2):                    # 押しそこね・読み違いなら1回だけ入れ直す
             op.click_elem(ui, fields[k], wait=0.8)
             ui = _type_number(op, want)
-            got = field_value(ui, time_fields(ui)[k], ocr)
+            got = field_value(ui, time_fields(ui)[k])
             if got is not None and abs(got - want) < 1e-6:
                 break
             if attempt == 0:
@@ -659,8 +634,8 @@ EMPTY_INK = 0.005                    # 表の中の濃い点の割合がこれ�
 
 
 def _native(ui):
-    """読んだ画面を機器の大きさ(480x640)に戻す(機器へ直接つなぐときだけ。そうでなければ None)"""
-    img = getattr(ui, "image", None) if BACKEND == "direct" and ui is not None else None
+    """読んだ画面を機器の大きさ(480x640)に戻す(画像が無ければ None)"""
+    img = getattr(ui, "image", None) if ui is not None else None
     return img.resize((480, img.height * 480 // img.width)) if img is not None else None
 
 
@@ -679,7 +654,7 @@ def result_info(ui: ScreenUI) -> dict:
     """結果画面からファイル No(sample_no)と機器の測定時間(inst_time)を読む。元素の表が空なら empty"""
     info = {"empty": True} if result_empty(ui) else {}
     from screen_match import recognized
-    if BACKEND == "direct" and not recognized(ui):  # 結果画面のボタンはあるが、見本で読めない部分がある(知らせの窓が重なった など)
+    if not recognized(ui):                          # 結果画面のボタンはあるが、見本で読めない部分がある(知らせの窓が重なった など)
         info["odd"] = True
     if (frame := _native(ui)) is not None:
         import screen_match
@@ -729,7 +704,7 @@ def wait_reconnect(op: Operator, on_wait, kind: str = "offline"):
     """接続が切れた: 本体画面がつなぎ直すのを待ち、つながった接続に付け替える(RESUME_WAIT_S まで。停止なら Cancelled)"""
     relink = getattr(op.rc, "relink", None)
     if relink is None:
-        raise ConnectionError("接続が切れました(RemoteCTRL の窓では再開しない)")
+        raise ConnectionError("接続が切れました(つなぎ直せない相手なので再開しない)")
     on_wait(kind)                                  # offline = 続きから再開 / cut = 照射の途中で切れた(結果を読んで終える)
     end = time.time() + RESUME_WAIT_S
     while not relink():
@@ -1016,14 +991,11 @@ def parse_plan(s: str) -> list[tuple[str, list[float]]]:
 def main():
     a = sys.argv[1:]
     opt = lambda k, d=None: a[a.index(k) + 1] if k in a else d
-    global BACKEND
-    if "--remotectrl" in a:          # 予備: 機器へ直接つながず、RemoteCTRL の窓を相手にする
-        BACKEND = "remotectrl"
     op = Operator()
 
     if "--check" in a:
         ui = op.read()
-        print(f"状態: {op.state(ui)}  窓倍率: {ui.scale:.2f}  アプリ: {op.current_app(ui)!r}")
+        print(f"状態: {op.state(ui)}  アプリ: {op.current_app(ui)!r}")
         print("ボタン:", [b.text for b in ui.buttons])
         print("テキスト:", [t.text for t in ui.texts])
         return 0

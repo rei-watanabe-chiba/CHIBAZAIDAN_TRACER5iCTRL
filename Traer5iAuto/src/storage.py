@@ -20,7 +20,6 @@ SETTINGS = os.path.join(CONFIG_DIR, "gui_settings.json")
 LOG_CSV = os.path.join(CONFIG_DIR, "measure_log.csv")
 LEDGER_STORE = os.path.join(CONFIG_DIR, "ledger.json")  # 台帳の正本(全部の行とターンの記録。保存先の File.csv は有効な行だけ)
 ERROR_PNG = os.path.join(CONFIG_DIR, "last_error.png")
-DIAG_DIR = os.path.join(CONFIG_DIR, "remotectrl_test")     # bruker_ui の診断画像
 APP_LOG = os.path.join(CONFIG_DIR, "app_log.txt")          # アプリのログ・アラート・思わぬエラー(画面を閉じても残る)
 APP_LOG_MAX = 300_000                                      # これを超えたら古い半分を消す(バイト)
 NEW_SCREENS_DIR = os.path.join(CONFIG_DIR, "new_screens")  # 照合の見本に無かった機器の画面(見本を足すため。最大 NEW_SCREENS_MAX 枚)

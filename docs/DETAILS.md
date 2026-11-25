@@ -12,7 +12,7 @@ TRACERexl/                  開発用(このフォルダ)
   Traer5iAuto/              配布するアプリ(これだけを移せば動く)。改修はここ
     start_measure_gui.vbs   起動用(窓を出さない。`pythonw src/web_app.py`)。ASCII・CRLF。**相対パスの基準**(作業フォルダをここにして起動する)
     src/                    ソースコード(コマンドはこのフォルダで実行する)
-    config/                 初回起動で自動作成: 設定・実行記録・異常時の画面(last_error.png)・診断画像(remotectrl_test/)
+    config/                 初回起動で自動作成: 設定・実行記録・異常時の画面(last_error.png)・見本に無い画面(new_screens/)
     TracerData/             初回起動で自動作成: 保存先(固定・変更不可)。File.csv / Results.csv / pdz/
   tests/                    テスト(配布しない。TRACERexl で `python tests/...` と実行。Traer5iAuto/src を読み込む)
                             sensor/: 蓋の磁気センサー(USB 413d:2107、スイッチ 2 = F24 に書き換え済み・抜き差しと再起動でも残る。磁石が近いと F24 を押したまま = オン)の確認用。sensor_config.py(割り当ての読み書き)・sensor_monitor.py(オン / オフを見る窓)
@@ -45,18 +45,18 @@ TRACERexl/                  開発用(このフォルダ)
 - **配布するのは `Traer5iAuto/`(中身は `start_measure_gui.vbs` と `src/` だけ)**。フォルダごと移せばよい。`config/` と `TracerData/` は初回起動時に自動で作られる(`save_settings` / `LedgerBook` / `append_log` が `makedirs` する)。
 - 配布先に必要なもの:
   - Windows 10/11(日本語の言語パック・OCR は不要。画面は見本との照合で読む)。
-  - Python 3.14(`pythonw` が PATH にあること。VBS は `pythonw` で起動する)と `requirements.txt` のパッケージ(pillow・pywebview・pythonnet。winrt = OCR は見本を作るときと --remotectrl だけ。OpenCV・numpy・Tk は使わない)。WebView2 Runtime(Windows 11 は標準)。
+  - Python 3.14(`pythonw` が PATH にあること。VBS は `pythonw` で起動する)と `requirements.txt` のパッケージ(pillow・pywebview・pythonnet。winrt = OCR は見本を作るときだけ。OpenCV・numpy・Tk は使わない)。WebView2 Runtime(Windows 11 は標準)。
   - 機器への USB RNDIS 接続(画面・操作は TCP 55100〜55102 に直接つなぐ。取り込みは TCP 55000)。RemoteCTRL は不要(つないでいたら閉じておく)。Instrument Tools も終了しておく。
 - PASS は `config/gui_settings.json` の `pass` にそのまま(暗号化せず)保存する(2026-11-10 ユーザーの判断。DPAPI はやめた)。`config/` を渡すと PASS も渡るので、配る前に消すか空にする。前の版の `pass_enc` は読まないので、入力し直す。
 - 機器の画面の座標は届いた画面(480x640)で解析するので、窓の大きさ・画面の DPI に関係しない。窓の見た目の大きさは、起動時に選ぶ全体の倍率(`UI.ZOOMS`、下の「GUI の約束ごと」)で画面に合わせる(配布先での確認は未実施)。
 
 | ファイル | 役割 |
 |---|---|
-| `src/bruker_ui.py` | RemoteCTRL 窓の特定・背景キャプチャ・ボタン検出・OCR(入力は送らない)。`python bruker_ui.py` で診断 |
-| `src/device_link.py` | **機器へ直接つなぐ**(RemoteCTRL を使わない。PROTOCOL_55100.md)。`DeviceLink`(55102 画面の受信・クリック / 55101 トリガーの状態 / 55100 トリガーの命令。受信はスレッド)、`shared_link()`(アプリで1つの接続。つなぐのに約5秒)、`DirectRemote`(`RemoteCtrl` と同じ使い方。画像は機器の画面を縦横2倍・最近傍で、200% の RemoteCTRL と同じ形)。`auto_measure.BACKEND = "direct"` で `Operator` がこれを使う(既定は "remotectrl") |
+| `src/screen_ui.py` | 読んだ画面の形(`ScreenUI` / `UIElement`)・名前の照合(`same_name`)・青いボタンの検出(`detect_buttons`)。2026-11-25 に、消した `bruker_ui.py`(RemoteCTRL の窓を相手にする予備の処理)から共通の部分を移した。OCR は `tests/ocr_read.py`(見本を作るときだけ) |
+| `src/device_link.py` | **機器へ直接つなぐ**(RemoteCTRL を使わない。PROTOCOL_55100.md)。`DeviceLink`(55102 画面の受信・クリック / 55101 トリガーの状態 / 55100 トリガーの命令。受信はスレッド)、`shared_link()`(アプリで1つの接続。つなぐのに約5秒)、`DirectRemote`(`auto_measure.Operator` が使う。画像は機器の画面を縦横2倍・最近傍) |
 | `src/screen_match.py` | 機器の画面を**見本の絵と照合して読む**(OCR を使わない)。ボタン(青いかたまり → 同じ位置の見本と内側を比べる)・決まった文字(見本の位置)・数字(0〜9 の字形)。戻り値は `ScreenUI`(基準 960 幅)。`recognized(ui)` で読めたか判断 |
 | `src/screens/` | 照合の見本(実機の画面 480x640 の PNG と `screens.json`)。作るのは `tests/build_screens.py`(開発用。ここだけ OCR を使う) |
-| `src/storage.py` | 保存まわりの共通処理。フォルダの定数(`CONFIG_DIR` / `TRACER_DIR` / `SETTINGS` / `LOG_CSV` / `ERROR_PNG` / `DIAG_DIR`。すべて VBS のフォルダ基準の**相対パス**、直接起動したときは `use_base()` で VBS のフォルダへ移る)、`ensure_parent`、`write_atomic`(一時ファイル → 置き換え)、`load_settings` / `save_settings`。**ファイルの保存は必ず `write_atomic` を使う** |
+| `src/storage.py` | 保存まわりの共通処理。フォルダの定数(`CONFIG_DIR` / `TRACER_DIR` / `SETTINGS` / `LOG_CSV` / `ERROR_PNG` / `NEW_SCREENS_DIR`。すべて VBS のフォルダ基準の**相対パス**、直接起動したときは `use_base()` で VBS のフォルダへ移る)、`ensure_parent`、`write_atomic`(一時ファイル → 置き換え)、`load_settings` / `save_settings`。**ファイルの保存は必ず `write_atomic` を使う** |
 | `src/auto_measure.py` | 操作の中核(`Operator`、ログイン、アプリ切替、測定、計画実行)。CLI あり。`storage` の定数を `am.SETTINGS` などとして持つ(テストはここを差し替える) |
 | `src/gui_config.py` | `class UI`(見た目と項目定義)。**見た目の変更はこのファイルだけ**。値はそのまま画面へ渡す(下の「GUI の約束ごと」) |
 | `src/ledger_core.py` | **台帳の中身**(画面を持たない。`LedgerBook`): 正本の読み書き・File.csv の書き出し・前の版からの移し替え・セットの記録・`pair`・計測済み・警告・表に出す文と色(`shown`)。`controller.LedgerModel` が持つ。2026-11-19〜 |
@@ -136,6 +136,8 @@ CLI(`auto_measure.py`):
 
 ## 機器の操作の仕組み(画面の解析は RemoteCTRL のときと共通)
 
+> この節の初めのほう(窓クラス・キャプチャ・メッセージでの入力・`read_ui` の OCR)は、2026-11-25 に消した RemoteCTRL の窓を相手にする処理の記録。今のアプリは機器へ直接つなぎ(下の「機器へ直接つなぐ」)、画面は見本との照合で読む。名前の照合(`same_name`)・ボタンの検出は `screen_ui.py`、OCR は `tests/ocr_read.py`(見本を作るときだけ)。
+
 - 窓クラスは `S1RemoteHostClass`。**DPI 非対応**の窓。
 - **キャプチャ**: `PrintWindow` で取得する(他の窓が重なっていても撮れる)。
   - DPI 非対応のため、論理サイズ分の左上を切り出して NEAREST で拡大する。
@@ -150,7 +152,6 @@ CLI(`auto_measure.py`):
   - **機器の画面は左上に固定の大きさ**(ズーム 1X で幅 `NATIVE_W`=480 論理px。DPI 200% ならキャプチャで 960px)。窓を広げても右・下に白い余白が増えるだけ(2026-11-10 実機で確認)。
     - `read_ui` はキャプチャの左上から機器の画面の幅(`content_width()`)だけを切り出して `REF_W` に正規化する。下の余白は白いだけなので残す。
     - クリック位置は `ui.scale`(機器の画面の幅 / REF_W)を掛けるだけ(窓の大きさによらない)。
-    - 窓が機器の画面より狭いと右側が切れるので、`Operator.read` が OcrError にする(RemoteCTRL を相手にする CLI の `--remotectrl` だけ)。
 - **OCR の誤読への対策**:
   - 例: 設定→似定、OK→"0 K"、戻る→屎る。
   - `_match_score` / `same_name` で、あいまい一致と紛らわしい文字(0/O、1/l/i、5/S)を吸収している。
@@ -196,7 +197,7 @@ CLI(`auto_measure.py`):
 - 1測定あたりの切替・画面遷移の実測は 4〜7 秒。
 - **機器へ直接つなぐ(2026-11-10〜、アプリの既定。`device_link`、`device_core.DeviceWatch`)**: RemoteCTRL を使わない。2026-11-10 にユーザーの測定で、直接つないだまま 時間の書き込み・照射・取り込みまで通ることを確認(No.754・755)。
   - 通信の形は [PROTOCOL_55100.md](PROTOCOL_55100.md)。55102 で画面(480x640)を受け取り・クリックを送る、55101 でトリガーの状態、55100 でトリガーの命令(`TRIGGER_PULL` は照射)。
-  - `auto_measure.BACKEND = "direct"`(既定)で `Operator` は `DirectRemote` を使う。座標は 960 幅の基準座標 → 機器の px(半分)。
+  - `Operator` は `DirectRemote` を使う。座標は 960 幅の基準座標 → 機器の px(半分)。
   - **画面の読み取りは見本との照合だけ**(`screen_match`、`DirectRemote.read_ui`。OCR は使わない。2026-11-10 にユーザーの測定 No.758・759 で、ログインから取り込みまで OCR なしで通ることを確認)。1回 約 0.1 秒。見本で読めない画面は状態 unknown になり(測定の処理は先へ進まず止まる)、その画面を `config/new_screens/` に残す(最大 40 枚・同じ画面は1枚)。見本を足すには、残った画面を `src/screens/` の PNG と一緒に `tests/build_screens.py` にかけ直し、残った画面は消す。
   - 見本は実機の 29 画面(初期化中・起動画面・放射線の注意・ログイン・メイン 5 モード・アプリ選択・現在の構成・各モードの設定・テンキー・測定中・結果)。数字は 0〜9 と - : . の字形(No の行「756 01-02 15:40」、「時間 15.0」、時間の欄)。
   - フォーカスのあるボタンは枠が 1px ずつ大きく見つかる。見本とは位置・大きさ 3px 以内で、見本の位置で切り出して比べる(`NEAR`)。名前の無い大きなボタンがあれば読めたことにしない(`recognized`)。
@@ -217,7 +218,7 @@ CLI(`auto_measure.py`):
       - 2026-11-12 ユーザーの測定(No.771〜774)で確認: **USB の接続が切れると、機器は照射を止める**(本体で確認)。その回は短い測定(例: 設定 30 秒 / 機器 8 秒)として結果画面と結果表に残り、再開すると「測定は終わっていました」としてその No を読み、計測時間誤差のアラートで知らせる。**途中で止まった回を測り直すかは保留**(2026-11-12 ユーザーの判断。測り直すとファイル番号が変わり、台帳の入力の重複の判定にも関わるため、扱いを検討してから)。結果表の ElapsedTime は結果画面の「時間」と同じ値。**Spectrometer Mode の回は結果表に行が無い**(pdz はある。2026-11-13 実機)ので、`results_rows` は機器の pdz の一覧も読み、結果表に載らない回を時間なしの行(モードは pdz の名前から)として足す(その回を再開で読むと、時間が分からないので失敗「接続エラー」)。**ソフトの側で TCP を切っても機器は照射を止めない**(設定の時間まで照射する。2026-11-13 実機。USB を抜いたときだけ止まる)。
   - 機器は同時に1つの相手としかつながらない。アプリがつないでいる間は RemoteCTRL ではつなげない(逆も同じ。つながらなければ本体画面の「接続」でつなぎ直す)。
   - 「機器の画面」の枠: 届いた画面(480x640)をそのまま canvas に描き、大きさは CSS で左の列の幅に合わせる(縦横比 3:4。窓の大きさが変わればブラウザーが伸び縮みさせる)。解析は届いたままの 480x640 で行うので表示の大きさに関係しない。枠の中のクリックを機器へ送る(手で操作できる)。自動測定の間は手で押せない(`manual`)。上の行に、つながっているか・照射できる状態か(`UI.TRIGGER_LABEL`)。
-  - `RemoteCtrl`(RemoteCTRL の窓を相手にする方式)は予備として残す(CLI の `--remotectrl`)。RemoteCTRL の取り込み・起動・自動接続の処理は 2026-11-10 に削除した(経緯は CHANGELOG)。
+  - RemoteCTRL の窓を相手にする予備の処理(`bruker_ui.RemoteCtrl`・CLI の `--remotectrl`)は 2026-11-25 に削除した(取り込み・起動・自動接続の処理は 2026-11-10 に削除。経緯は CHANGELOG)。
   - テストは偽の機器(`tests/fake_device.py`・`tests/demo_device.py`)を使う。`device_core.connect_link` / `find_devices` を WebApp を作る前に差し替え、本物の機器につながない。
 - OCR はイベントループを使い回し、`SoftwareBitmap` と `DataWriter` を close する(メモリ増加の対策済み。600回読んでもメモリは横ばい)。
 

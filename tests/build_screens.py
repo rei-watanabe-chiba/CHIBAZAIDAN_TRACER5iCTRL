@@ -15,7 +15,7 @@ SRC = os.path.join(ROOT, "Traer5iAuto", "src")
 sys.path.insert(0, SRC)
 from PIL import Image
 
-import bruker_ui as bu
+import ocr_read
 import screen_match as sm
 
 OUT = os.path.join(SRC, "screens")
@@ -37,7 +37,7 @@ EXTRA_GLYPHS = [("-", "result_Obsidian", (86, 94, 92, 96)), (":", "result_Obsidi
 
 
 def main(folder: str) -> int:
-    rc = object.__new__(bu.RemoteCtrl); rc.ocr = bu._Ocr("ja")
+    ocr = ocr_read.Ocr("ja")
     screens, items = [], []
     os.makedirs(OUT, exist_ok=True)
     for name in sorted(os.path.splitext(f)[0] for f in os.listdir(folder) if f.endswith(".png")):
@@ -48,7 +48,7 @@ def main(folder: str) -> int:
             print("大きさが違うので使わない:", name, img.size); continue
         img.save(os.path.join(OUT, name + ".png"), optimize=True)
         screens.append(name)
-        ui = rc.read_ui(img.resize((sm.W * sm.K, sm.H * sm.K), Image.NEAREST), content_w=sm.W * sm.K)
+        ui = ocr_read.read_ui(ocr, img.resize((sm.W * sm.K, sm.H * sm.K), Image.NEAREST))
         if name == "login":                               # テンキーの数字は OCR で読めないので、位置で名前を付ける
             keys = sorted((b for b in ui.buttons if not b.text), key=lambda b: (b.rect[1] // 40, b.rect[0]))
             for b, ch in zip(keys, "1234567890"):
@@ -66,7 +66,7 @@ def main(folder: str) -> int:
         if name == "confirm":                             # 「現在の構成:」の行(アプリによらず同じ。下の行はアプリ名で変わる)
             blob = max(ui.buttons, key=lambda b: b.rect[2] * b.rect[3])
             x, y, w, h = blob.rect
-            line = rc.ocr.lines(ui.image.crop((x, y, x + w, y + h)))[0]
+            line = ocr.lines(ui.image.crop((x, y, x + w, y + h)))[0]
             lx, ly, lw, lh = line[1]
             items.append({"kind": "text", "label": "現在の構成:", "screen": name,
                           "rect": [(x + lx) // sm.K - 2, (y + ly) // sm.K - 2, lw // sm.K + 4, lh // sm.K + 4]})

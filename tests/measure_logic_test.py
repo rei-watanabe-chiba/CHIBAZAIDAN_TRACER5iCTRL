@@ -22,7 +22,7 @@ except Exception:
 
 import auto_measure as am
 import instrument_files as inf
-from bruker_ui import ScreenUI, UIElement
+from screen_ui import ScreenUI, UIElement
 
 results: list[tuple[bool, str]] = []
 
@@ -197,13 +197,13 @@ def resume_tests():
         check("再開: 照射の前(切替の途中)に切れたら、つなぎ直してその回をはじめから(照射は1回)",
               calls.count(("switch", "Obsidian")) == 2 and op.pulls == 1 and [r.get("sample_no") for r in rows] == ["712"],
               (calls, op.pulls, rows))
-        # つなぎ直せない(RemoteCTRL の窓など relink が無い): 中断する
+        # つなぎ直せない(relink が無い相手): 中断する
         am.switch_app = lambda op, app: (_ for _ in ()).throw(ConnectionError("test: 切れた"))
         try:
             am.run_plan(type("NoRelink", (), {"rc": object()})(), [("Obsidian", [30])], set_each=False)
             check("再開: つなぎ直せない相手なら中断", False)
         except ConnectionError:
-            check("再開: つなぎ直せない相手(RemoteCTRL の窓)なら、待たずに「接続切れ」で中断", True)
+            check("再開: つなぎ直せない相手(relink が無い)なら、待たずに「接続切れ」で中断", True)
     finally:
         am.switch_app, am.set_phase_times, am.log, am.login, am.open_login = saved
 
@@ -276,7 +276,8 @@ def fetch_tests():
 def detect_tests():
     """ボタン検出(Pillow だけ): 青い矩形を見つけ、文字の穴・小さいもの・矩形でないものを正しく扱う"""
     from PIL import Image, ImageDraw
-    import bruker_ui as bu
+    import ocr_read
+    import screen_ui
     img = Image.new("RGB", (960, 600), (235, 235, 235))
     d = ImageDraw.Draw(img)
     blue = (20, 40, 200)
@@ -285,31 +286,21 @@ def detect_tests():
     d.rectangle((400, 400, 420, 415), fill=blue)                     # 小さすぎる
     d.line((600, 100, 900, 500), fill=blue, width=6)                 # 斜めの線(矩形でない)
     d.rectangle((300, 50, 499, 109), fill=blue); d.rectangle((300, 110, 340, 300), fill=blue)  # L字(面積が足りない)
-    rects = bu._detect_buttons(img)
+    rects = screen_ui.detect_buttons(img)
     check("検出: 青いボタンを位置どおりに見つける(文字の穴は埋める)",
           rects[:1] == [(50, 50, 200, 60)] and (50, 180, 150, 60) in rects, rects)
     check("検出: 小さいもの・矩形でないものは除く", len(rects) == 2, rects)
-    check("2値化: 大津のしきい値は2つの山の間", 40 <= bu._otsu([0] * 40 + [100] + [0] * 159 + [100] + [0] * 55) < 200)
+    check("2値化(見本を作るときの OCR): 大津のしきい値は2つの山の間", 40 <= ocr_read._otsu([0] * 40 + [100] + [0] * 159 + [100] + [0] * 55) < 200)
 
 
 def field_tests():
-    """時間の欄の数値: 画面全体の OCR で拾えなければ、欄の内側だけを読み直す(2026-11-10 取り込み中の実機で起きた)"""
+    """時間の欄の数値: 欄の中の数字(screen_match が字形で読んだ文字)を読む"""
     from PIL import Image
     img = Image.new("RGB", (960, 600), "white")
     f = UIElement("field", "", (361, 282, 207, 93))
-    seen = []
-
-    class Ocr:
-        def lines(self, im):
-            seen.append(im.size)
-            return [("15", (0, 0, 10, 10))]
-    ui = ScreenUI(img, [], [text("時間")], 1.0)
-    check("欄の値: 画面全体で拾えなければ None(OCR を渡さないとき)", am.field_value(ui, f) is None)
-    check("欄の値: 欄の内側だけを余白付きで読み直す", am.field_value(ui, f, Ocr()) == 15.0
-          and seen == [(207 - 2 * am.FIELD_INSET + 60, 93 - 2 * am.FIELD_INSET + 60)], seen)
+    check("欄の値: 欄の中に数字が無ければ None", am.field_value(ScreenUI(img, [], [text("時間")], 1.0), f) is None)
     ui2 = ScreenUI(img, [], [UIElement("text", "120", (400, 300, 60, 40))], 1.0)
-    seen.clear()
-    check("欄の値: 画面全体で拾えたら読み直さない", am.field_value(ui2, f, Ocr()) == 120.0 and not seen)
+    check("欄の値: 欄の中の数字を読む", am.field_value(ui2, f) == 120.0)
 
 
 def device_tests():
@@ -330,7 +321,7 @@ def device_tests():
         check("直接: トリガーの状態は、まだ知らせが来ていなければ待ってから答える(すぐ測定を始めても「不明」にならない)",
               rc.trigger_state() == "pull" and link.status == "released", link.status)
         img = rc.capture_background()
-        check("直接: 画像は 200% の RemoteCTRL と同じ形(縦横2倍)", img.size == (960, 1280) and img.getpixel((640, 300)) == (0, 0, 255),
+        check("直接: 画像は機器の画面の縦横2倍(基準の 960 幅)", img.size == (960, 1280) and img.getpixel((640, 300)) == (0, 0, 255),
               img.size)
         check("直接: 基準座標(960 幅)→ 機器の座標", rc.to_client(None, (640, 300)) == (320, 150))
         seq = link.seq
@@ -616,13 +607,11 @@ def device_tests():
             check("直接: 照射できない状態(ログイン画面など)では照射の命令を送らない",
                   fd.commands == ["TRIGGER_PULL", "TRIGGER_RELEASE"] and rc.trigger_state() == "unknown")
         check("直接: 照射していなければ release は何もしない", link.release() and fd.commands.count("TRIGGER_RELEASE") == 1)
-        # Operator から使う(auto_measure.BACKEND = "direct")
+        # Operator から使う
         kept = []
         real_keep = dl._keep_new_screen
         dl._keep_new_screen = lambda raw: kept.append(raw.size)
         dl.LINK = link
-        real_backend = am.BACKEND
-        am.BACKEND = "direct"
         try:
             op = am.Operator()
             fd.say("TRIGGER_RELEASED"); link.wait_status(("released",), 3)
@@ -640,26 +629,19 @@ def device_tests():
             check("直接: 見本に無い画面は OCR を使わず「不明」とし、見本の候補として残す", kept and kept[0] == (480, 640)
                   and am.Operator.state(None, ui) == "unknown", kept)
         finally:
-            am.BACKEND = real_backend
             dl.LINK = None
             dl._keep_new_screen = real_keep
-        # 見本にある画面(実機のメイン画面)は照合だけで読む(OCR を使わない)
+        # 見本にある画面(実機のメイン画面)は照合で読む
         from PIL import Image
-        import bruker_ui as bu
         fd2 = FakeDevice(screen=Image.open(os.path.join(ROOT, "screens", "main.png"))).start()
         link2 = dl.DeviceLink("127.0.0.1", timeout=5, ports=fd2.ports)
-        real_ocr_read = bu.RemoteCtrl.read_ui
-        bu.RemoteCtrl.read_ui = lambda *a, **k: (_ for _ in ()).throw(AssertionError("OCR を使った"))
         try:
             link2.connect()
             rc2 = dl.DirectRemote(link=link2)
             ui = rc2.read_ui()
-            check("直接: 見本にある画面は照合だけで読む(OCR を使わない)",
+            check("直接: 見本にある画面は照合で読む",
                   am.Operator.state(None, ui) == "main" and am.Operator.current_app(None, ui) == "Mudrock Air")
-        except AssertionError as e:
-            check("直接: 見本にある画面は照合だけで読む(OCR を使わない)", False, e)
         finally:
-            bu.RemoteCtrl.read_ui = real_ocr_read
             link2.close(); fd2.drop()
         fd.drop()
         _time.sleep(0.5)
@@ -707,10 +689,9 @@ def match_tests():
     check("照合: フォーカスが別のボタンにあっても読める(2026-11-10 実機:「アプリケーション」が見つからず中断した)",
           fx.find_button("アプリケーション", 0.8) is not None and am.Operator.current_app(None, fx) == "Mudrock Air"
           and fx.find_button("設定", 0.9) is not None and sm.recognized(fx), [b.text for b in fx.buttons])
-    from bruker_ui import ScreenUI as _SU
-    part = _SU(None, [UIElement("button", "OK", (0, 0, 200, 100)), UIElement("button", "", (0, 200, 300, 200))], [], 1.0)
-    check("照合: 名前の無い大きなボタンがあれば読めたことにしない(OCR に回す)", not sm.recognized(part))
-    check("照合: 見本に無い画面は読めたことにしない(OCR に回す)", not sm.recognized(lib.read(Image.new("RGB", (480, 640), "white"))))
+    part = ScreenUI(None, [UIElement("button", "OK", (0, 0, 200, 100)), UIElement("button", "", (0, 200, 300, 200))], [], 1.0)
+    check("照合: 名前の無い大きなボタンがあれば読めたことにしない", not sm.recognized(part))
+    check("照合: 見本に無い画面は読めたことにしない", not sm.recognized(lib.read(Image.new("RGB", (480, 640), "white"))))
 
 
 def storage_tests():
@@ -807,33 +788,9 @@ def refs_tests():
         shutil.rmtree(d, ignore_errors=True)
 
 
-def window_tests():
-    """RemoteCTRL の窓を広げても、機器の画面(左上の固定幅)だけを解析し、クリック位置も変わらない"""
-    from PIL import Image, ImageDraw
-    import bruker_ui as bu
-    rc = object.__new__(bu.RemoteCtrl)
-    rc.ocr = type("NoOcr", (), {"lines": lambda self, img: []})()
-    def screen(w, h, k=1.0):               # 機器の画面(幅 960*k)+ 右・下の白い余白
-        img = Image.new("RGB", (w, h), (255, 255, 255))
-        ImageDraw.Draw(img).rectangle((round(32 * k), round(52 * k), round(309 * k), round(223 * k)), fill=(20, 40, 220))
-        return img
-    base = rc.read_ui(screen(960, 1318), content_w=960)
-    wide = rc.read_ui(screen(1754, 1318), content_w=960)
-    both = rc.read_ui(screen(1356, 1842), content_w=960)
-    check("窓: 広げても機器の画面だけを解析(ボタンの位置が同じ)",
-          [b.rect for b in base.buttons] == [b.rect for b in wide.buttons] == [b.rect for b in both.buttons] == [(32, 52, 278, 172)],
-          ([b.rect for b in base.buttons], [b.rect for b in wide.buttons]))
-    check("窓: クリック位置は窓の大きさによらない", rc.to_client(wide, wide.buttons[0].center) == rc.to_client(base, base.buttons[0].center) == (171, 138),
-          rc.to_client(wide, wide.buttons[0].center))
-    half = rc.read_ui(screen(700, 659, 0.5), content_w=480)          # 拡大表示していない PC(機器の画面 480px)
-    check("窓: 機器の画面が 480px なら 2 倍にして解析し、クリックは元の大きさに戻す",
-          len(half.buttons) == 1 and abs(rc.to_client(half, half.buttons[0].center)[0] - 85) <= 1, [b.rect for b in half.buttons])
-
-
 def checkbox_tests():
     """「デフォルト設定を使用」のチェック欄の位置: 文字の位置がずれても欄の中を押す"""
     from PIL import Image, ImageDraw
-    from bruker_ui import ScreenUI, UIElement
     img = Image.new("RGB", (960, 300), (255, 255, 255))
     d = ImageDraw.Draw(img)
     d.rectangle((141, 111, 170, 140), outline=(0, 0, 0), width=2)      # チェック欄
@@ -850,9 +807,9 @@ def path_tests():
     """config / TracerData は VBS のフォルダ基準の相対パス"""
     import storage as paths, tempfile
     check("パス: 設定・記録・異常時の画面・保存先は相対パス",
-          not any(os.path.isabs(p) for p in (paths.SETTINGS, paths.LOG_CSV, paths.ERROR_PNG, paths.TRACER_DIR, paths.DIAG_DIR)))
-    check("パス: 異常時の画面と診断画像は config の中",
-          all(os.path.normpath(p).split(os.sep)[0] == "config" for p in (paths.ERROR_PNG, paths.DIAG_DIR, paths.SETTINGS)))
+          not any(os.path.isabs(p) for p in (paths.SETTINGS, paths.LOG_CSV, paths.ERROR_PNG, paths.TRACER_DIR)))
+    check("パス: 異常時の画面と設定は config の中",
+          all(os.path.normpath(p).split(os.sep)[0] == "config" for p in (paths.ERROR_PNG, paths.SETTINGS)))
     cwd = os.getcwd()
     try:
         os.chdir(tempfile.gettempdir())
@@ -1000,8 +957,6 @@ def settle_tests():
             self.seq, self.n = list(seq), 0
         def capture_background(self):
             return Image.new("RGB", (1, 1))
-        def content_width(self):
-            return 0
         def read_ui(self, img=None):
             ui = self.seq[min(self.n, len(self.seq) - 1)]
             self.n += 1
@@ -1011,9 +966,8 @@ def settle_tests():
         op = am.Operator.__new__(am.Operator)
         op.rc, op.ui = Rc(seq), None
         return op
-    saved = am.BACKEND, am.SETTLE_RETRY
+    saved = am.SETTLE_RETRY
     try:
-        am.BACKEND = "direct"
         if partial is not None:
             op = op_with([partial, partial, scr("login.png")])
             ui = op.read()
@@ -1157,7 +1111,7 @@ def settle_tests():
         finally:
             dl.DeviceLink.connect, dl.DeviceLink.close, dl.LINK, dl.device_present = saved_dl
     finally:
-        am.BACKEND, am.SETTLE_RETRY = saved
+        am.SETTLE_RETRY = saved
 
 
 def retry_tests():
@@ -1616,7 +1570,6 @@ def main() -> int:
         field_tests()
         exe_tests()
         detect_tests()
-        window_tests()
         checkbox_tests()
         settle_tests()
         lid_tests()

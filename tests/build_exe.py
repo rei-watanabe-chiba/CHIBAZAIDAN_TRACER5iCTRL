@@ -26,7 +26,7 @@ SRC = os.path.join(ROOT, "Traer5iAuto", "src")
 NAME = "Traer5iAuto"
 DIST = os.path.join(ROOT, "dist")
 WORK = os.path.join(ROOT, "build")
-EXCLUDE = ["numpy", "cv2", "winrt", "tkinter"]   # アプリでは使わないもの(winrt = OCR は見本を作るときと予備の --remotectrl だけ)
+EXCLUDE = ["numpy", "cv2", "winrt", "tkinter"]   # アプリでは使わないもの(winrt = OCR は見本を作るときだけ)
 
 
 def pyinstaller_args() -> list[str]:

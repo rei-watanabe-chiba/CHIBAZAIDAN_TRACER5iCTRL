@@ -11,7 +11,7 @@ for app in sys.argv[1:]:
     op.click_elem(ui, b, wait=1.0)
     ui = op.wait_state("settings", 10)
     f = am.time_fields(ui)
-    vals = [am.field_value(ui, x, None) for x in f]
+    vals = [am.field_value(ui, x) for x in f]
     print(f"{app}: 欄 {len(f)} 個 {vals}  デフォルト設定を使用={'オン' if not f else 'オフ'}")
     am._close_settings(op, save=False)
 am.to_main(op)

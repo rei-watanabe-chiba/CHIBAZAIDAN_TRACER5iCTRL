@@ -32,7 +32,7 @@ RULES = [
     (SRC + r"(app_rules|\w+_core)\.py$", ("core",)),
     (SRC + r"(controller|device_core)\.py$", ("controller",)),
     (SRC + r"(auto_measure|device_link|lid_sensor)\.py$", ("logic", "controller")),
-    (SRC + r"(screen_match|instrument_files|bruker_ui|shutdown)\.py$", ("logic",)),
+    (SRC + r"(screen_match|instrument_files|screen_ui|shutdown)\.py$", ("logic",)),
     (SRC + r"screens/", ("logic",)),
     (SRC + r"(web_app\.py$|web/)", ("web",)),
     (SRC, ("core", "logic", "controller")),

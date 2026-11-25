@@ -60,6 +60,10 @@ def wait_for(fn, timeout=10.0, step=0.05):
     return None
 
 
+_dpi = ctypes.c_int(-1)
+ctypes.windll.shcore.GetProcessDpiAwareness(None, ctypes.byref(_dpi))
+check("DPI: web_app を読み込むと、画面ごとの DPI に合わせる(2。窓の大きさ・小窓の配置は物理の px で扱う)", _dpi.value == 2, _dpi.value)
+
 # ---------------------------------------------------------------- 本物の設定・台帳・ログを書き換えない
 tmp = tempfile.mkdtemp(prefix="web_smoke_")
 settings = os.path.join(tmp, "config", "gui_settings.json")

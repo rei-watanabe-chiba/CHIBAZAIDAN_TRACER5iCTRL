@@ -37,7 +37,10 @@ TRACERexl/                  開発用(このフォルダ)
 | `instrument_files.py` | TCP 55000 のファイル一覧・取り込み(読み取り専用) |
 | `storage.py` | フォルダの定数・`write_atomic`・設定・`single_instance`・`append_log` |
 | `gui_config.py` | `class UI`(見た目と文言のすべて) |
-| `shutdown.py` / `bruker_ui.py` | 閉じるときの照射の止め方 / RemoteCTRL の窓(予備。CLI の `--remotectrl`) |
+| `screen_ui.py` | 読んだ画面の形(`ScreenUI` / `UIElement`)・名前の照合(`same_name`)・青いボタンの検出 |
+| `shutdown.py` | 閉じるときの照射の止め方 |
+
+OCR(winrt)はアプリでは使わない。見本を作るとき(`tests/build_screens.py` → `tests/ocr_read.py`)だけ。RemoteCTRL の窓を相手にする予備の処理は 2026-11-25 に消した。
 
 保存するもの: `config/gui_settings.json`(設定。PASS は `pass` に平文 = ユーザーの判断)・`config/ledger.json`(**台帳の正本**)・`config/measure_log.csv`・`config/app_log.txt`・`config/last_error.png`(異常時 1 枚)・`<保存先>/File.csv`(正本から有効な行だけを毎回書き出す)。
 

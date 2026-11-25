@@ -4,6 +4,13 @@
 
 ## 2026-11-25
 
+### 削除: RemoteCTRL の窓を相手にする予備の処理
+- 削除: `bruker_ui.py`(RemoteCTRL の窓の特定・キャプチャ・メッセージでの入力・OCR で読む `read_ui`・診断の CLI)、`auto_measure` の `BACKEND` と CLI の `--remotectrl`、窓が狭いときの確かめ、時間の欄を OCR で読み直す処理(`field_value` の `ocr`・`FIELD_INSET`)、`DirectRemote.content_width`、`storage.DIAG_DIR`(診断画像のフォルダ)。
+- 整理: 共通で使う部分(`ScreenUI` / `UIElement`・`same_name`・青いボタンの検出 `detect_buttons`)を `src/screen_ui.py` へ、見本を作るときの OCR(`Ocr`・`read_ui`・大津の2値化・ぼかし)を `tests/ocr_read.py` へ移した。`tests/build_screens.py` はそちらを使う。
+- 修正: 画面ごとの DPI に合わせる設定(`SetProcessDpiAwareness(2)`)は、`bruker_ui` を読み込んだときについでに行われていた。消すと窓の大きさ・小窓の配置がずれた(web_smoke の小窓の確認が NG)ので、`web_app.py` の先頭で設定するようにし、確認項目を足した。
+- 変更: 閉じるときにトリガーを離せなかった知らせ(`UI.CLOSE_FAIL_TEXT`)から「(または RemoteCTRL の F6)」を外した(アプリがつないでいる間は RemoteCTRL はつなげないため)。
+- テスト用データで確認(core 51/51・measure_logic 198/198・controller 56/56・web_smoke 105/105。measure_logic は RemoteCTRL の窓の確認を消した分減った)。実機・exe の作り直しは未確認。`tests/build_screens.py` は OCR(winrt)が要るので走らせていない。
+
 ### 整理: 方針を変えたときの残りを片付ける
 - 整理: CLAUDE.md から Actions をやめた経緯の文を消した(経緯はこの改修ログにある)。
 - 整理: `.gitignore` から、もう現れない `Traer5iAuto/x`・`Traer5iAuto/boot_frames/` と、`build/` で外れている `*.spec` を消した。

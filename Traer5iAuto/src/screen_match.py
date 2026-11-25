@@ -1,11 +1,11 @@
 """機器の画面を、見本の絵と照合して読む(OCR を使わない)。直接つないだ機器の画面(480x640)用
 
 機器の画面は配置が決まっていて、文字も毎回同じ画素で描かれるので、見本と画素で比べれば読める:
-  - ボタン: 青いかたまりを見つけ(bruker_ui._detect_buttons)、同じ位置・大きさの見本と内側(枠の点線を除く)を比べて名前を決める
+  - ボタン: 青いかたまりを見つけ(screen_ui.detect_buttons)、同じ位置・大きさの見本と内側(枠の点線を除く)を比べて名前を決める
   - 文字: 見本の位置の絵を比べる(決まった文字だけ。状態の行=上の 25px は時刻などで変わるので使わない)
   - 数字: 0〜9 の字形(テンキーの表示欄に打って集めた)と1文字ずつ比べる。時間の欄([-][+] の間)と、見本で決めた数字の欄
 見本は src/screens/(画面の PNG と screens.json)。作り方は tests/build_screens.py。
-戻り値は bruker_ui.ScreenUI(座標は基準の 960 幅)なので、auto_measure の画面判定・クリックはそのまま使える。
+戻り値は screen_ui.ScreenUI(座標は基準の 960 幅)なので、auto_measure の画面判定・クリックはそのまま使える。
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import json, os
 
 from PIL import Image, ImageChops, ImageStat
 
-from bruker_ui import REF_W, ScreenUI, UIElement, _detect_buttons
+from screen_ui import REF_W, ScreenUI, UIElement, detect_buttons
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCREENS = os.path.join(HERE, "screens")
@@ -81,7 +81,7 @@ class Library:
         frame = frame.convert("RGB")
         big = frame.resize((W * K, H * K), Image.NEAREST)
         buttons = []
-        for (x, y, w, h) in _detect_buttons(big):
+        for (x, y, w, h) in detect_buttons(big):
             r = (x // K, y // K, w // K, h // K)
             # フォーカスのあるボタンは、見つかる枠が 1px ずつ大きい(2026-11-10 実機)。位置・大きさが近い見本を、
             # 見本の位置で切り出して比べる(見つけた枠ではなく)
