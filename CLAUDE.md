@@ -20,6 +20,8 @@ TRACERexl/                  開発用(このフォルダ)
   Software and Firmware/    Bruker 付属物。触らない
 ```
 
+- **git で管理する**(2026-11-25〜。GitHub `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`、**公開リポジトリ**、ブランチ main)。`config/`・`TracerData/`(PASS・測定データ)・`build/`・`dist/`・控えのフォルダ・`Software and Firmware/`・借用一覧の CSV は `.gitignore` で外す。公開なので、PASS・測定データ・他の機関の資料をコミットしない。控えはフォルダのコピーではなく git で残す。コミット・push はユーザーに頼まれたときだけ。
+
 ## 主なファイル(`Traer5iAuto/src/`)
 
 | ファイル | 役割 |

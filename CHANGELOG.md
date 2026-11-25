@@ -4,6 +4,11 @@
 
 ## 2026-11-25
 
+### 追加: git で管理し GitHub へ置く
+- 追加: TRACERexl を git で管理し、GitHub の公開リポジトリ `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`(main)へ push した。
+- 追加: `.gitignore`(実行時のデータ `config/`・`TracerData/`、`build/`・`dist/`、控えのフォルダ、`Software and Firmware/`、借用一覧の CSV、`__pycache__/` を外す)と `.gitattributes`(VBS は CRLF のまま)。
+- コードは変えていない。
+
 ### 整理: CLAUDE.md を要点だけにする
 - 整理: 毎回読み込まれる CLAUDE.md を要点だけにした(約 101 KB → 約 13 KB)。元の全文は `docs/DETAILS.md` へ移した(中身は変えていない)。細部を変える前に DETAILS.md の該当する節を読み、決まりを変えたら DETAILS.md を直す。
 - 修正: サブエージェント `gui-tester` の説明が Tk 版(`measure_gui.py`・`gui_smoke_test.py`)のままだったので、今の作り(`web_app.py`・`web/`・`web_smoke_test.py` ほか)と偽の機器・偽のセンサーの決まりに直した。
