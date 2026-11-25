@@ -3,13 +3,10 @@ config/
 TracerData/
 Traer5iAuto/config/
 Traer5iAuto/TracerData/
-Traer5iAuto/boot_frames/
-Traer5iAuto/x
 
-# exe の作成物
+# exe の作成物(spec も build/ の中に作られる)
 build/
 dist/
-*.spec
 
 # 控え・古いデータ(git の外に置く)
 archive/

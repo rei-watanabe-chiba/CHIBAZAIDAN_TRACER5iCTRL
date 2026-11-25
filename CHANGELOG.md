@@ -4,6 +4,11 @@
 
 ## 2026-11-25
 
+### 整理: 方針を変えたときの残りを片付ける
+- 整理: CLAUDE.md から Actions をやめた経緯の文を消した(経緯はこの改修ログにある)。
+- 整理: `.gitignore` から、もう現れない `Traer5iAuto/x`・`Traer5iAuto/boot_frames/` と、`build/` で外れている `*.spec` を消した。
+- 整理: docs/DETAILS.md の「サブエージェントの使い分け」「改修ログ」は CLAUDE.md と重なる古い版だったので、CLAUDE.md を見るように 1 行にした。
+
 ### 削除: GitHub Actions をやめる
 - 削除: `.github/workflows/tests.yml`。テストは作業のたびに手元で走らせているので重なり、結果を見に行く手間のほうが大きいため(ユーザーの判断)。テストは `tests/run_changed.py` で手元だけで走らせる。
 

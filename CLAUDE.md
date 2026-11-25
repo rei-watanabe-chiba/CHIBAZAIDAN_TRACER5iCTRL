@@ -92,7 +92,7 @@ CLI(`auto_measure.py`): `--check` / `--login` / `--switch-only "App"` / `--set-t
 | `controller.py`・`device_core.py` | `python tests/controller_test.py`(2〜3 分) |
 | `web_app.py`・`web/` | `python tests/web_smoke_test.py`(約 1 分) |
 
-**ふつうは `python tests/run_changed.py` で走らせる**(まだコミットしていない変更から上の表のとおりに選ぶ。`main` を付けると main からの変更も、`--all` で全部、`--list` で選ぶだけ)。テストは手元だけで走らせる(GitHub Actions は 2026-11-25 にやめた: 毎回ここで走らせているので重なるため)。照射に関わらないテストと git の読み取りは `.claude/settings.json` で確認なしに許可し、`auto_measure.py` の CLI・`tests/realdevice/`・`git push` はいつも確認する。
+**ふつうは `python tests/run_changed.py` で走らせる**(まだコミットしていない変更から上の表のとおりに選ぶ。`main` を付けると main からの変更も、`--all` で全部、`--list` で選ぶだけ)。テストは手元だけで走らせる。照射に関わらないテストと git の読み取りは `.claude/settings.json` で確認なしに許可し、`auto_measure.py` の CLI・`tests/realdevice/`・`git push` はいつも確認する。
 
 新しい挙動には確認項目を足す。新しいファイルを足したら `run_changed.py` の `RULES` にも足す。テスト中に出た確認ダイアログを人が押すと結果が変わりうるので、テストはボタンや API を直接操作して判定する。
 
