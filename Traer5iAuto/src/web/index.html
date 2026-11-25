@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Bruker 自動測定</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<aside id="sidebar">
+  <div id="left">
+    <!-- 状態と操作の白い箱: 状態の欄(左: 状態 / 右: 計測資料。下の縁に進捗バー)→ ボタン → 測定モード表とドック → チェック → 機器PASS -->
+    <section id="ctrl-box">
+      <div class="status" id="status">
+        <div class="status-main"><b id="status-title"></b><div id="status-detail"></div></div>
+        <div class="status-line"></div>
+        <div class="status-aside"><small data-ui="STATUS_ASIDE_TITLE"></small><div id="aside"></div></div>
+        <div class="status-bar" id="status-bar" hidden><div></div></div>
+      </div>
+      <div class="pad">
+        <div class="buttons"><button class="main" id="btn-main"></button><button class="main" id="btn-end" hidden></button></div>
+        <div class="mini-row compact-only"><label class="check"><input type="checkbox" id="mini-top"><span data-ui="LBL_MINI_TOP"></span></label>
+          <span class="mini-views" id="mini-views"></span></div>
+      </div>
+      <div class="pad" id="modes-pad">
+        <div class="modes" id="modes" tabindex="0">
+          <table><thead><tr><th class="no">No</th><th><span data-ui="LBL_MODE_COL"></span><i class="badge" data-ui="MODE_COL_BADGE"></i></th>
+            <th><span data-ui="LBL_PHASE_COL"></span><i class="badge" data-ui="PHASE_COL_BADGE"></i></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="dock"><a id="mode-add" data-ui="LINK_ADD_ROW"></a><a id="mode-del" class="danger" data-ui="LINK_DELETE_ROW"></a><span id="mode-total"></span></div>
+      </div>
+      <div class="pad" id="foot-pad">
+        <div class="foot">
+          <label class="check"><input type="checkbox" id="skip"><span data-ui="LBL_SKIP_PHASES"></span></label>
+          <label class="check"><input type="checkbox" id="mini-on"><span data-ui="LBL_MINI_ENABLE"></span></label>
+          <label class="pass"><span data-ui="LBL_PASS"></span><input id="pass" inputmode="numeric" autocomplete="off"></label>
+        </div>
+      </div>
+    </section>
+    <h2 class="title" data-ui="LBL_SCREEN"></h2>
+    <div id="screen-wrap">
+      <canvas id="screen" width="480" height="640"></canvas>
+      <div id="screen-wait" hidden data-ui="DEVICE_CONNECTING"></div>
+      <div id="device-overlay">
+        <table class="device-list"><thead><tr id="device-head"></tr></thead><tbody id="device-rows"></tbody></table>
+        <button id="btn-connect" data-ui="BTN_CONNECT"></button>
+        <div id="device-msg"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+<!-- 右の列: 3 段(境目をドラッグできる): [計測ファイル | 資料一覧] / 計測台帳 / ログ・アラート -->
+<main id="right">
+  <section class="pane" id="pane-top">
+    <div class="col" id="info-col">
+      <div class="head"><h2 class="title" data-ui="LBL_INFO"></h2><span class="info-badge" id="info-badge"></span></div>
+      <div class="card info-card" id="info-card"></div>
+    </div>
+    <div class="col grow" id="refs-col">
+      <div class="head"><h2 class="title" data-ui="LBL_REFS"></h2><button class="head-btn" id="refs-open" data-ui="REF_OPEN"></button>
+        <span class="note" id="refs-file"></span>
+        <button class="tool" id="refs-btn-filter" data-ui="REF_BTN_FILTER"></button><button class="tool" id="refs-btn-join" data-ui="REF_BTN_JOIN"></button></div>
+      <div class="bar" id="bar-filter" hidden><button class="tool on-off" id="refs-on"></button>
+        <span data-ui="REF_LBL_TARGET"></span><select id="refs-target"></select>
+        <span data-ui="REF_LBL_TEXT"></span><input id="refs-query"></div>
+      <div class="bar" id="bar-join" hidden><span data-ui="REF_LBL_A"></span><select id="join-a"></select>
+        <span data-ui="REF_LBL_SEP"></span><input id="join-sep"><span data-ui="REF_LBL_B"></span><select id="join-b"></select>
+        <button class="head-btn" id="join-make"></button><button class="head-btn" id="join-drop" data-ui="REF_JOIN_DELETE"></button></div>
+      <div class="tbl" id="refs-table"></div>
+      <div class="hint" id="refs-hint"></div>
+    </div>
+  </section>
+  <div class="sash" data-i="0"><i></i></div>
+  <section class="pane" id="pane-ledger">
+    <div class="head"><h2 class="title" data-ui="LBL_LEDGER"></h2><button class="head-btn" id="ledger-folder" data-ui="BTN_SAVE_TO"></button>
+      <span class="note" id="ledger-path"></span></div>
+    <div class="tbl" id="ledger-table"></div>
+    <div class="hint" id="ledger-hint"></div>
+  </section>
+  <div class="sash" data-i="1"><i></i></div>
+  <section class="pane" id="pane-log">
+    <nav class="tabs"><button data-tab="log" class="on" data-ui="TAB_LOG"></button><button data-tab="alert" id="tab-alert" data-ui="TAB_ALERTS"></button></nav>
+    <div class="logbox" id="log"></div>
+    <div class="logbox alert" id="alert" hidden></div>
+  </section>
+</main>
+<!-- 照射前の確認(安全確認をすべてチェックするまで「照射開始」は押せない。Enter・Esc はキャンセル)/ 知らせ -->
+<dialog id="confirm"><div class="icon"></div><p class="lead"></p><div class="checks"></div>
+  <div class="row"><button class="ok"></button><button class="cancel">キャンセル</button></div></dialog>
+<dialog id="message"><p class="title"></p><p class="text"></p><div class="row"><button class="close">OK</button></div></dialog>
+<dialog id="ask"><p class="title"></p><p class="text"></p><div class="row"><button class="yes">はい</button><button class="no">いいえ</button></div></dialog>
+<div class="menu" id="menu" hidden></div>
+<script src="core.js"></script>
+<script src="status.js"></script>
+<script src="table.js"></script>
+<script src="app.js"></script>
+<script src="right.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# 実行時に作られるもの(設定に PASS が平文で入る・測定データ)
+config/
+TracerData/
+Traer5iAuto/config/
+Traer5iAuto/TracerData/
+Traer5iAuto/boot_frames/
+Traer5iAuto/x
+
+# exe の作成物
+build/
+dist/
+*.spec
+
+# 控え(git で管理するので不要)
+backup_tk_2026-11-20/
+buckup/
+
+# Bruker 付属物(再配布しない)
+Software and Firmware/
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code の個人設定
+.claude/settings.local.json

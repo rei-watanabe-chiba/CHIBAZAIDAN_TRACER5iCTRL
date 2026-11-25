@@ -1,0 +1,2542 @@
+{
+ "screens": [
+  "acquiring",
+  "booting",
+  "confirm",
+  "keypad",
+  "keypad_digits",
+  "login",
+  "main",
+  "main_Glass_Dual",
+  "main_Obsidian",
+  "main_Precious_Metals_2",
+  "main_Spectrometer_Mode",
+  "measuring_Mudrock_Air",
+  "measuring_Obsidian",
+  "measuring_start",
+  "result_Mudrock_Air",
+  "result_Obsidian",
+  "safety",
+  "select_Glass_Dual",
+  "select_Mudrock_Air",
+  "select_Obsidian",
+  "select_Precious_Metals_2",
+  "select_Spectrometer_Mode",
+  "select_app",
+  "settings_Glass_Dual",
+  "settings_Mudrock_Air",
+  "settings_Obsidian",
+  "settings_Precious_Metals_2",
+  "settings_Spectrometer_Mode",
+  "startup"
+ ],
+ "items": [
+  {
+   "kind": "button",
+   "label": "元素 P P M",
+   "rect": [
+    4,
+    143,
+    473,
+    36
+   ],
+   "screen": "acquiring"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "acquiring"
+  },
+  {
+   "kind": "text",
+   "label": "初期化中",
+   "rect": [
+    191,
+    381,
+    92,
+    22
+   ],
+   "screen": "booting"
+  },
+  {
+   "kind": "button",
+   "label": "現在の構成: アプリケーション:MudrockAir モード:空気 マニュアルフィルター:(なし) スポット:8mml",
+   "rect": [
+    41,
+    254,
+    397,
+    297
+   ],
+   "screen": "confirm"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    154,
+    565,
+    171,
+    53
+   ],
+   "screen": "confirm"
+  },
+  {
+   "kind": "text",
+   "label": "現在の構成:",
+   "screen": "confirm",
+   "rect": [
+    39,
+    259,
+    126,
+    28
+   ]
+  },
+  {
+   "kind": "button",
+   "label": "15",
+   "rect": [
+    17,
+    135,
+    25,
+    33
+   ],
+   "screen": "keypad"
+  },
+  {
+   "kind": "button",
+   "label": "7 4 1 削除 OK 8 5 2 0 クリア バックスペース 9 6 3 リセット キャンセル",
+   "rect": [
+    15,
+    199,
+    456,
+    409
+   ],
+   "screen": "keypad"
+  },
+  {
+   "kind": "text",
+   "label": "1 時間",
+   "rect": [
+    20,
+    74,
+    103,
+    36
+   ],
+   "screen": "keypad"
+  },
+  {
+   "kind": "button",
+   "label": "7 4 1 削除 OK 8 5 2 0 クリア バックスペース 9 6 3 リセット キャンセル",
+   "rect": [
+    15,
+    199,
+    456,
+    409
+   ],
+   "screen": "keypad_digits"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    169,
+    199,
+    148,
+    293
+   ],
+   "screen": "keypad_digits"
+  },
+  {
+   "kind": "text",
+   "label": "1 時間",
+   "rect": [
+    20,
+    74,
+    103,
+    36
+   ],
+   "screen": "keypad_digits"
+  },
+  {
+   "kind": "button",
+   "label": "1",
+   "rect": [
+    16,
+    26,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "2",
+   "rect": [
+    166,
+    26,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "3",
+   "rect": [
+    317,
+    26,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "4",
+   "rect": [
+    17,
+    122,
+    137,
+    84
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "5",
+   "rect": [
+    166,
+    121,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "6",
+   "rect": [
+    317,
+    121,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "7",
+   "rect": [
+    16,
+    216,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "8",
+   "rect": [
+    166,
+    216,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "9",
+   "rect": [
+    317,
+    216,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "CLR",
+   "rect": [
+    16,
+    311,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "0",
+   "rect": [
+    166,
+    311,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "DEL",
+   "rect": [
+    317,
+    311,
+    139,
+    86
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    15,
+    553,
+    127,
+    55
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "text",
+   "label": "ログインID:",
+   "rect": [
+    18,
+    417,
+    121,
+    23
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "text",
+   "label": "ださい。",
+   "rect": [
+    17,
+    526,
+    78,
+    20
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "text",
+   "label": "操作権限のある人物のみが操作してく",
+   "rect": [
+    16,
+    491,
+    401,
+    22
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "text",
+   "label": "警告: 本計器は電離放射線を発生します。",
+   "rect": [
+    65,
+    458,
+    380,
+    23
+   ],
+   "screen": "login"
+  },
+  {
+   "kind": "button",
+   "label": "アプリケーション Mudrock Air",
+   "rect": [
+    16,
+    175,
+    209,
+    128
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "設定",
+   "rect": [
+    256,
+    174,
+    211,
+    130
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "方法 Mudrock Air",
+   "rect": [
+    15,
+    314,
+    211,
+    130
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "表示 (なし)",
+   "rect": [
+    256,
+    314,
+    211,
+    130
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "カメラ",
+   "rect": [
+    134,
+    454,
+    211,
+    88
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "ユーティリティ",
+   "rect": [
+    15,
+    553,
+    173,
+    55
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    204,
+    553,
+    127,
+    55
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "ログオフ",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "text",
+   "label": "試験準備完了",
+   "rect": [
+    142,
+    79,
+    190,
+    30
+   ],
+   "screen": "main"
+  },
+  {
+   "kind": "button",
+   "label": "アプリケーション Glass Dual",
+   "rect": [
+    16,
+    175,
+    209,
+    128
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "設定",
+   "rect": [
+    256,
+    174,
+    211,
+    130
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "方法 Glass Dual",
+   "rect": [
+    15,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "表示 (なし)",
+   "rect": [
+    256,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "カメラ",
+   "rect": [
+    134,
+    454,
+    211,
+    88
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "ユーティリティ",
+   "rect": [
+    15,
+    553,
+    173,
+    55
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    204,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "ログオフ",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "試験準備完了",
+   "rect": [
+    142,
+    79,
+    190,
+    30
+   ],
+   "screen": "main_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "アプリケーション Obsidian",
+   "rect": [
+    16,
+    175,
+    209,
+    128
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "設定",
+   "rect": [
+    256,
+    174,
+    211,
+    130
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "方法 Obsidian",
+   "rect": [
+    15,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "表示 (なし)",
+   "rect": [
+    256,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "カメラ",
+   "rect": [
+    134,
+    454,
+    211,
+    88
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "ユーティリティ",
+   "rect": [
+    15,
+    553,
+    173,
+    55
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    204,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "ログオフ",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "試験準備完了",
+   "rect": [
+    142,
+    79,
+    190,
+    30
+   ],
+   "screen": "main_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "アプリケーション Precious Metals 2",
+   "rect": [
+    16,
+    175,
+    209,
+    128
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "設定",
+   "rect": [
+    256,
+    174,
+    211,
+    130
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "方法 Auto",
+   "rect": [
+    15,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "表示 グレーD",
+   "rect": [
+    256,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "カメラ",
+   "rect": [
+    134,
+    454,
+    211,
+    88
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "ユーティリティ",
+   "rect": [
+    15,
+    553,
+    173,
+    55
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    204,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "ログオフ",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "試験準備完了",
+   "rect": [
+    142,
+    79,
+    190,
+    30
+   ],
+   "screen": "main_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "アプリケーション Spectrometer Mode",
+   "rect": [
+    16,
+    175,
+    209,
+    128
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "設定",
+   "rect": [
+    256,
+    174,
+    211,
+    130
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "方法",
+   "rect": [
+    15,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "表示 (なし)",
+   "rect": [
+    256,
+    314,
+    211,
+    130
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "カメラ",
+   "rect": [
+    134,
+    454,
+    211,
+    88
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "ユーティリティ",
+   "rect": [
+    15,
+    553,
+    173,
+    55
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    204,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "ログオフ",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "試験準備完了",
+   "rect": [
+    142,
+    79,
+    190,
+    30
+   ],
+   "screen": "main_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "measuring_Mudrock_Air"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    3,
+    80,
+    297,
+    24
+   ],
+   "screen": "measuring_Mudrock_Air"
+  },
+  {
+   "kind": "number",
+   "label": "時間",
+   "rect": [
+    55,
+    104,
+    245,
+    36
+   ],
+   "screen": "measuring_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "元素 P P M",
+   "rect": [
+    4,
+    143,
+    473,
+    36
+   ],
+   "screen": "measuring_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "measuring_Obsidian"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    3,
+    80,
+    297,
+    24
+   ],
+   "screen": "measuring_Obsidian"
+  },
+  {
+   "kind": "number",
+   "label": "時間",
+   "rect": [
+    55,
+    104,
+    245,
+    36
+   ],
+   "screen": "measuring_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "元素 P P M",
+   "rect": [
+    4,
+    143,
+    473,
+    36
+   ],
+   "screen": "measuring_start"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "measuring_start"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    3,
+    80,
+    297,
+    24
+   ],
+   "screen": "measuring_start"
+  },
+  {
+   "kind": "number",
+   "label": "時間",
+   "rect": [
+    55,
+    104,
+    245,
+    36
+   ],
+   "screen": "measuring_start"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    15,
+    483,
+    82,
+    31
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    382,
+    483,
+    82,
+    31
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "平均化",
+   "rect": [
+    15,
+    520,
+    208,
+    39
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "平均を計算",
+   "rect": [
+    232,
+    520,
+    232,
+    39
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    169,
+    570,
+    138,
+    39
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "屎る",
+   "rect": [
+    344,
+    570,
+    120,
+    39
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    3,
+    80,
+    297,
+    24
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "number",
+   "label": "時間",
+   "rect": [
+    55,
+    104,
+    245,
+    36
+   ],
+   "screen": "result_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    15,
+    483,
+    82,
+    31
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    382,
+    483,
+    82,
+    31
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "平均化",
+   "rect": [
+    15,
+    520,
+    208,
+    39
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "平均を計算",
+   "rect": [
+    232,
+    520,
+    232,
+    39
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "スペクトル",
+   "rect": [
+    16,
+    571,
+    118,
+    37
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "情報の編集",
+   "rect": [
+    169,
+    570,
+    138,
+    39
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "屎る",
+   "rect": [
+    344,
+    570,
+    120,
+    39
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    3,
+    80,
+    297,
+    24
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "number",
+   "label": "時間",
+   "rect": [
+    55,
+    104,
+    245,
+    36
+   ],
+   "screen": "result_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "発生します。認可を受けたユーサーのみ",
+   "rect": [
+    28,
+    38,
+    428,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "がこの機器を使用することができます。",
+   "rect": [
+    28,
+    72,
+    415,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "取扱説明書および学習用教材によって提",
+   "rect": [
+    28,
+    108,
+    431,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "供される安全指導に加えて、",
+   "rect": [
+    88,
+    142,
+    294,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "あらゆるユーサーには地域、州、連邦",
+   "rect": [
+    38,
+    174,
+    411,
+    23
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "の規制および指導に従う責任があります。",
+   "rect": [
+    18,
+    207,
+    437,
+    23
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "機器の安全機能の起動または停止は、上",
+   "rect": [
+    28,
+    244,
+    429,
+    23
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "述したすべての規則に従う必要があります。",
+   "rect": [
+    4,
+    278,
+    463,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "text",
+   "label": "トリガを引いて放すと続行します",
+   "rect": [
+    70,
+    607,
+    350,
+    22
+   ],
+   "screen": "safety"
+  },
+  {
+   "kind": "button",
+   "label": "Glass Dual",
+   "rect": [
+    16,
+    63,
+    447,
+    33
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "Mudrock Air",
+   "rect": [
+    19,
+    105,
+    125,
+    17
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "Obsidian",
+   "rect": [
+    18,
+    138,
+    90,
+    17
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "Precious Metals 2",
+   "rect": [
+    19,
+    171,
+    186,
+    17
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "Spectrometer Mode",
+   "rect": [
+    18,
+    204,
+    205,
+    22
+   ],
+   "screen": "select_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "Mudrock Air",
+   "rect": [
+    16,
+    96,
+    447,
+    33
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "Glass Dual",
+   "rect": [
+    18,
+    72,
+    113,
+    17
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "Obsidian",
+   "rect": [
+    18,
+    138,
+    90,
+    17
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "Precious Metals 2",
+   "rect": [
+    19,
+    171,
+    186,
+    17
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "Spectrometer Mode",
+   "rect": [
+    18,
+    204,
+    205,
+    22
+   ],
+   "screen": "select_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "Obsidian",
+   "rect": [
+    16,
+    129,
+    447,
+    33
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "Glass Dual",
+   "rect": [
+    18,
+    72,
+    113,
+    17
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "Mudrock Air",
+   "rect": [
+    19,
+    105,
+    125,
+    17
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "Precious Metals 2",
+   "rect": [
+    19,
+    171,
+    186,
+    17
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "Spectrometer Mode",
+   "rect": [
+    18,
+    204,
+    205,
+    22
+   ],
+   "screen": "select_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "Precious Metals 2",
+   "rect": [
+    16,
+    162,
+    447,
+    33
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "Glass Dual",
+   "rect": [
+    18,
+    72,
+    113,
+    17
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "Mudrock Air",
+   "rect": [
+    19,
+    105,
+    125,
+    17
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "Obsidian",
+   "rect": [
+    18,
+    138,
+    90,
+    17
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "Spectrometer Mode",
+   "rect": [
+    18,
+    204,
+    205,
+    22
+   ],
+   "screen": "select_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "Spectrometer Mode",
+   "rect": [
+    16,
+    195,
+    447,
+    33
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "Glass Dual",
+   "rect": [
+    18,
+    72,
+    113,
+    17
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "Mudrock Air",
+   "rect": [
+    19,
+    105,
+    125,
+    17
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "Obsidian",
+   "rect": [
+    18,
+    138,
+    90,
+    17
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "Precious Metals 2",
+   "rect": [
+    19,
+    171,
+    186,
+    17
+   ],
+   "screen": "select_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "Mudrock Air",
+   "rect": [
+    16,
+    96,
+    447,
+    33
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "text",
+   "label": "分析タイプを選択",
+   "rect": [
+    17,
+    25,
+    189,
+    23
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "text",
+   "label": "Glass Dual",
+   "rect": [
+    18,
+    72,
+    113,
+    17
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "text",
+   "label": "Obsidian",
+   "rect": [
+    18,
+    138,
+    90,
+    17
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "text",
+   "label": "Precious Metals 2",
+   "rect": [
+    19,
+    171,
+    186,
+    17
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "text",
+   "label": "Spectrometer Mode",
+   "rect": [
+    18,
+    204,
+    205,
+    22
+   ],
+   "screen": "select_app"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    199,
+    40,
+    47
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    199,
+    40,
+    47
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "手動 トリガアクティブ",
+   "rect": [
+    148,
+    512,
+    187,
+    97
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "デフォルト設定を使用",
+   "rect": [
+    95,
+    51,
+    234,
+    21
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "フェーズ",
+   "rect": [
+    26,
+    108,
+    92,
+    22
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "時間",
+   "rect": [
+    217,
+    100,
+    43,
+    21
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "text",
+   "label": "無限",
+   "rect": [
+    345,
+    100,
+    46,
+    21
+   ],
+   "screen": "settings_Glass_Dual"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    199,
+    40,
+    47
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    199,
+    40,
+    47
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "手動 トリガアクティブ",
+   "rect": [
+    148,
+    512,
+    187,
+    97
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "デフォルト設定を使用",
+   "rect": [
+    95,
+    51,
+    234,
+    21
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "フェーズ",
+   "rect": [
+    26,
+    108,
+    92,
+    22
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "時間",
+   "rect": [
+    217,
+    100,
+    43,
+    21
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "text",
+   "label": "無限",
+   "rect": [
+    345,
+    100,
+    46,
+    21
+   ],
+   "screen": "settings_Mudrock_Air"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "自動 トリガアクティブ",
+   "rect": [
+    148,
+    512,
+    187,
+    97
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "デフォルト設定を使用",
+   "rect": [
+    95,
+    51,
+    234,
+    21
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "フェーズ",
+   "rect": [
+    26,
+    108,
+    92,
+    22
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "時間",
+   "rect": [
+    217,
+    100,
+    43,
+    21
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "text",
+   "label": "無限",
+   "rect": [
+    345,
+    100,
+    46,
+    21
+   ],
+   "screen": "settings_Obsidian"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    141,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "",
+   "rect": [
+    284,
+    141,
+    40,
+    47
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "手動 トリガアクティブ",
+   "rect": [
+    148,
+    512,
+    187,
+    97
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    340,
+    553,
+    127,
+    55
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "デフォルト設定を使用",
+   "rect": [
+    95,
+    51,
+    234,
+    21
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "フェーズ",
+   "rect": [
+    26,
+    108,
+    92,
+    22
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "時間",
+   "rect": [
+    217,
+    100,
+    43,
+    21
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "text",
+   "label": "無限",
+   "rect": [
+    345,
+    100,
+    46,
+    21
+   ],
+   "screen": "settings_Precious_Metals_2"
+  },
+  {
+   "kind": "button",
+   "label": "リセット",
+   "rect": [
+    333,
+    62,
+    127,
+    35
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "Custom",
+   "rect": [
+    26,
+    114,
+    80,
+    33
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "手動 トリガアクティブ",
+   "rect": [
+    235,
+    421,
+    229,
+    72
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "OK",
+   "rect": [
+    16,
+    554,
+    125,
+    53
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "キャンセル",
+   "rect": [
+    333,
+    553,
+    127,
+    55
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "アプリケーション設定",
+   "rect": [
+    28,
+    46,
+    116,
+    22
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "ホイールTi 25um:Al 300um",
+   "rect": [
+    27,
+    233,
+    295,
+    21
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "マニュアル",
+   "rect": [
+    11,
+    283,
+    115,
+    20
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "コリメータ",
+   "rect": [
+    132,
+    320,
+    92,
+    20
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "8mm",
+   "rect": [
+    134,
+    358,
+    48,
+    17
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "システム設定",
+   "rect": [
+    28,
+    402,
+    140,
+    22
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "雰囲気",
+   "rect": [
+    292,
+    318,
+    70,
+    22
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "Air",
+   "rect": [
+    294,
+    358,
+    29,
+    17
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "期間",
+   "rect": [
+    16,
+    447,
+    45,
+    21
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "text",
+   "label": "無制限の期間",
+   "rect": [
+    55,
+    508,
+    141,
+    21
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "number",
+   "label": "",
+   "rect": [
+    156,
+    441,
+    52,
+    31
+   ],
+   "screen": "settings_Spectrometer_Mode"
+  },
+  {
+   "kind": "button",
+   "label": "ログイン",
+   "rect": [
+    15,
+    553,
+    127,
+    55
+   ],
+   "screen": "startup"
+  },
+  {
+   "kind": "text",
+   "label": "\"初期化 - 準備完了\"",
+   "rect": [
+    135,
+    380,
+    205,
+    23
+   ],
+   "screen": "startup"
+  }
+ ],
+ "digits": {
+  "screen": "keypad_digits",
+  "chars": "1234567890",
+  "boxes": [
+   [
+    20,
+    144,
+    26,
+    161
+   ],
+   [
+    31,
+    144,
+    42,
+    161
+   ],
+   [
+    44,
+    144,
+    55,
+    161
+   ],
+   [
+    56,
+    144,
+    68,
+    161
+   ],
+   [
+    70,
+    144,
+    81,
+    161
+   ],
+   [
+    83,
+    144,
+    94,
+    161
+   ],
+   [
+    96,
+    144,
+    107,
+    161
+   ],
+   [
+    109,
+    144,
+    120,
+    161
+   ],
+   [
+    122,
+    144,
+    133,
+    161
+   ],
+   [
+    135,
+    144,
+    146,
+    161
+   ]
+  ]
+ },
+ "glyphs": [
+  {
+   "char": "-",
+   "screen": "result_Obsidian",
+   "box": [
+    86,
+    94,
+    92,
+    96
+   ]
+  },
+  {
+   "char": ":",
+   "screen": "result_Obsidian",
+   "box": [
+    154,
+    89,
+    156,
+    101
+   ]
+  },
+  {
+   "char": ".",
+   "screen": "result_Obsidian",
+   "box": [
+    89,
+    131,
+    91,
+    133
+   ]
+  }
+ ]
+}

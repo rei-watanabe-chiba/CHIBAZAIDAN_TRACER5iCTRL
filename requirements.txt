@@ -1,0 +1,13 @@
+# Traer5iAuto の Python パッケージ(Python 3.14 で確認)
+# インストール: python -m pip install -r requirements.txt
+pillow==12.2.0
+pywebview==6.2.1      # 画面(WebView2)。pythonnet・clr_loader・bottle・proxy_tools も一緒に入る
+pythonnet==3.1.0      # pywebview が Windows で使う(Python 3.14 で動く版)
+# 以下はアプリには不要。照合の見本を作るとき(tests/build_screens.py)と、予備の RemoteCTRL の窓を相手にする方式(--remotectrl)だけ使う
+# winrt-runtime==4.1.0
+# winrt-Windows.Foundation==4!10.0.28000.2957
+# winrt-Windows.Foundation.Collections==4!10.0.28000.2957
+# winrt-Windows.Globalization==4!10.0.28000.2957
+# winrt-Windows.Graphics.Imaging==4!10.0.28000.2957
+# winrt-Windows.Media.Ocr==4!10.0.28000.2957
+# winrt-Windows.Storage.Streams==4!10.0.28000.2957
