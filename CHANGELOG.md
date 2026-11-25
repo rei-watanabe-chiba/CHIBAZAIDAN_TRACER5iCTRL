@@ -4,6 +4,9 @@
 
 ## 2026-11-25
 
+### 削除: GitHub Actions をやめる
+- 削除: `.github/workflows/tests.yml`。テストは作業のたびに手元で走らせているので重なり、結果を見に行く手間のほうが大きいため(ユーザーの判断)。テストは `tests/run_changed.py` で手元だけで走らせる。
+
 ### 追加: テストの自動選択・GitHub Actions・許可の一覧
 - 追加: `tests/run_changed.py`。まだコミットしていない変更(と、指定すれば main からの変更)から、CLAUDE.md の表のとおりにテストを選んで走らせ、結果を 1 行ずつ出す(`--all` / `--list`)。
 - 追加: `.github/workflows/tests.yml`。push・プルリクエストのたびに Windows で core_test・measure_logic_test・controller_test を走らせる(web_smoke_test は WebView2 の窓を出すので入れない)。
