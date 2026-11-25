@@ -242,7 +242,7 @@ def scenario(win):
         check("段の境目: ドラッグで高さを変え、割合を設定に保存する",
               wait_for(lambda: js("document.getElementById('pane-top').offsetHeight") > h_top + 10)
               and wait_for(lambda: isinstance(storage.load_settings(settings).get("right_split"), list)),
-              (h_top, js("document.getElementById('pane-top').offsetHeight"), storage.load_settings(settings).get("right_split")))
+              (h_top, js("document.getElementById('pane-top').offsetHeight"), storage.load_settings(settings).get("right_split"), logs[-3:]))
         h_down = js("document.getElementById('pane-top').offsetHeight")
         js("(() => { const s = document.querySelector('.sash[data-i=\"0\"]'); const r = s.getBoundingClientRect();"
            "s.dispatchEvent(new MouseEvent('mousedown', {clientX: r.left + 5, clientY: r.top + 5, bubbles: true}));"

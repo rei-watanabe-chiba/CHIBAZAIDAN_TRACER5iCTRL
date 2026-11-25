@@ -4,6 +4,11 @@
 
 ## 2026-11-25
 
+### 変更: 開発の進め方の見直しを取り入れる
+- 変更: CLAUDE.md に、テストが全部 OK で CHANGELOG に書いたら、頼まれるのを待たずに話題ごとにコミットして push する決まりと、push の前の確認(作成者のアドレスが noreply・公開してはいけないファイルが無い)を足した。経緯は DETAILS.md の「git」。
+- 変更: `tests/run_changed.py` は、web_smoke_test が NG のときだけ 1 回走らせ直し、2 回目に通れば「不安定」と出す(本物の窓を動かすので、まれに間合いで外れる。2026-11-25 に段の境目・小窓の最大化で 1 回ずつ。6 回続けて走らせても段の境目は再現しなかった)。
+- 変更: web_smoke の段の境目の確認が NG のとき、アプリのログの最後の 3 行も出す(次に起きたとき原因を追えるように)。
+
 ### 削除: RemoteCTRL の窓を相手にする予備の処理
 - 削除: `bruker_ui.py`(RemoteCTRL の窓の特定・キャプチャ・メッセージでの入力・OCR で読む `read_ui`・診断の CLI)、`auto_measure` の `BACKEND` と CLI の `--remotectrl`、窓が狭いときの確かめ、時間の欄を OCR で読み直す処理(`field_value` の `ocr`・`FIELD_INSET`)、`DirectRemote.content_width`、`storage.DIAG_DIR`(診断画像のフォルダ)。
 - 整理: 共通で使う部分(`ScreenUI` / `UIElement`・`same_name`・青いボタンの検出 `detect_buttons`)を `src/screen_ui.py` へ、見本を作るときの OCR(`Ocr`・`read_ui`・大津の2値化・ぼかし)を `tests/ocr_read.py` へ移した。`tests/build_screens.py` はそちらを使う。

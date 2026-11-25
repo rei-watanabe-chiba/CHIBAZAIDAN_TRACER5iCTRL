@@ -23,6 +23,7 @@ TESTS = {
     "web": "tests/web_smoke_test.py",
 }
 ALL = tuple(TESTS)
+RETRY_ONCE = {"web"}     # 本物の窓を動かすので、まれに間合いで外れる(2026-11-25: 段の境目・小窓の最大化で 1 回ずつ)。ほかは決まった結果なので走らせ直さない
 SRC = r"Traer5iAuto/src/"
 
 # (正規表現, テスト) を上から見て、最初に当てはまったものを使う
@@ -110,8 +111,17 @@ def main(argv: list[str]) -> int:
     if "--list" in flags:
         return 0
     print()
-    results = [run(t) for t in chosen]
-    print(f"\n{sum(results)}/{len(results)} のテストが OK")
+    results, shaky = [], []
+    for t in chosen:
+        ok = run(t)
+        if not ok and t in RETRY_ONCE:              # 窓の操作の間合いでまれに外れる: 1 回だけ走らせ直す
+            print(f"    {t} を 1 回だけ走らせ直します(窓の操作の間合いで外れることがあるため)")
+            ok = run(t)
+            if ok:
+                shaky.append(t)
+        results.append(ok)
+    print(f"\n{sum(results)}/{len(results)} のテストが OK"
+          + (f"(不安定: {', '.join(shaky)} は 1 回目 NG・2 回目 OK。上の NG の項目を覚えておく)" if shaky else ""))
     return 0 if all(results) else 1
 
 

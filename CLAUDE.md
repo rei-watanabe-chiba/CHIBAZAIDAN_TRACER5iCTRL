@@ -19,7 +19,9 @@ TRACERexl/                  開発用(このフォルダ)
   Software and Firmware/    Bruker 付属物。触らない
 ```
 
-- **git で管理する**(2026-11-25〜。GitHub `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`、**公開リポジトリ**、ブランチ main)。`config/`・`TracerData/`(PASS・測定データ)・`build/`・`dist/`・控えのフォルダ・`Software and Firmware/`・借用一覧の CSV は `.gitignore` で外す。公開なので、PASS・測定データ・他の機関の資料をコミットしない。控えはフォルダのコピーではなく git で残す。コミット・push はユーザーに頼まれたときだけ。
+- **git で管理する**(2026-11-25〜。GitHub `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`、**公開リポジトリ**、ブランチ main)。`config/`・`TracerData/`(PASS・測定データ)・`build/`・`dist/`・控えのフォルダ・`Software and Firmware/`・借用一覧の CSV は `.gitignore` で外す。公開なので、PASS・測定データ・他の機関の資料をコミットしない。控えはフォルダのコピーではなく git で残す。
+- **コミットと push**: 頼まれた作業を終え、`python tests/run_changed.py` が全部 OK(資料だけの変更はテスト不要)で、CHANGELOG に書いたら、話題ごとに 1 つのコミットにして main へ push する(頼まれるのを待たない)。テストが NG・走らせていない・作業の途中・ユーザーが「まだ」と言ったときはしない。履歴の書き直し・強制 push・ほかのリポジトリへの push は、そのたびに確かめる。
+- **push の前に確かめる**(公開リポジトリなので): ① `git config user.email` が noreply のアドレス(`…@users.noreply.github.com`)② コミットに入るファイル(`git status --short`)に `config/`・`TracerData/`・PASS・測定データ・他の機関の資料・秘密の情報が無い。どちらかが違えば push せずに知らせる。
 
 ## 主なファイル(`Traer5iAuto/src/`)
 

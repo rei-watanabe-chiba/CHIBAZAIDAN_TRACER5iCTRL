@@ -270,6 +270,12 @@ CLI(`auto_measure.py`):
 - **テスト**: 処理(`*_core.py`・`app_rules.py`)を変えたら `python tests/core_test.py`、測定の流れを変えたら `python tests/measure_logic_test.py`、`controller.py`・`device_core.py` を変えたら `python tests/controller_test.py`、画面(`web_app.py`・`web/`)を変えたら `python tests/web_smoke_test.py`(どれも TRACERexl で実行)。新しい挙動には確認項目を足す。テストは偽の機器(`tests/demo_device.py`・`tests/fake_device.py`)・偽の蓋のセンサー・一時フォルダだけを使い、本物の機器・設定・台帳に触れない。テスト中に出た確認ダイアログを人が押すと結果が変わりうるので、テストはボタンや API を直接操作して判定する。
 - 見た目を確かめるときは、アプリの窓だけを `PrintWindow` で撮る(ほかの窓・画面全体を撮らない)。見たら画像は消す。
 
+## git(2026-11-25〜)
+
+- GitHub の公開リポジトリ `rei-watanabe-chiba/CHIBAZAIDAN_TRACER5iCTRL`(main)。作成者のアドレスは noreply(2026-11-25 に最初の 3 つのコミットを書き直した。ほかのリポジトリの履歴は書き直さない: ユーザーの判断)。
+- テストが通ったら頼まれるのを待たずにコミットして push する(2026-11-25 ユーザーの判断。毎回の「コミットして push」の往復をなくすため)。push の前の確認は CLAUDE.md のとおり。
+- GitHub Actions は使わない(2026-11-25 に入れてすぐやめた: テストは作業のたびに手元で走らせているので重なる)。
+
 ## サブエージェントの使い分け・改修ログ
 
 CLAUDE.md の同じ名前の節だけが正(ここには書かない)。
