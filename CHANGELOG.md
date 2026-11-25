@@ -4,6 +4,12 @@
 
 ## 2026-11-25
 
+### 追加: テストの自動選択・GitHub Actions・許可の一覧
+- 追加: `tests/run_changed.py`。まだコミットしていない変更(と、指定すれば main からの変更)から、CLAUDE.md の表のとおりにテストを選んで走らせ、結果を 1 行ずつ出す(`--all` / `--list`)。
+- 追加: `.github/workflows/tests.yml`。push・プルリクエストのたびに Windows で core_test・measure_logic_test・controller_test を走らせる(web_smoke_test は WebView2 の窓を出すので入れない)。
+- 追加: `.claude/settings.json`。テストと git の読み取りは確認なしに許可し、`auto_measure.py` の CLI・`tests/realdevice/`・`git push` はいつも確認する。
+- 確認: git で管理するファイルだけを別のフォルダへ写して 3 つのテストを走らせ、すべて OK(core 51/51・measure_logic 202/202・controller 56/56)。GitHub Actions の上ではまだ走らせていない(push の後に確かめる)。
+
 ### 整理: 見本に無い画面の控えを消す
 - 削除: `Traer5iAuto/config/new_screens/`(見本に無かった機器の画面 9 枚)。アプリは書き込むだけで読まない(次に見本に無い画面が出たら、また作られる)。
 - 変更: measure_logic_test が読んでいた描きかけのログイン画面(`c09cf0632953.png`)を `tests/fixtures/login_partial.png` へ移し、テストはそこから読むようにした(前は無ければ確認を飛ばしていた)。measure_logic_test 202/202 OK。

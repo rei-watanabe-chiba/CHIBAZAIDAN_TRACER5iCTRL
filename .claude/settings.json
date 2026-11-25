@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python tests/core_test.py)",
+      "Bash(python tests/measure_logic_test.py)",
+      "Bash(python tests/controller_test.py)",
+      "Bash(python tests/web_smoke_test.py)",
+      "Bash(python tests/run_changed.py)",
+      "Bash(python tests/run_changed.py *)",
+      "PowerShell(python tests/core_test.py)",
+      "PowerShell(python tests/measure_logic_test.py)",
+      "PowerShell(python tests/controller_test.py)",
+      "PowerShell(python tests/web_smoke_test.py)",
+      "PowerShell(python tests/run_changed.py)",
+      "PowerShell(python tests/run_changed.py *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "PowerShell(git status *)",
+      "PowerShell(git diff *)",
+      "PowerShell(git log *)",
+      "PowerShell(git show *)"
+    ],
+    "ask": [
+      "Bash(python Traer5iAuto/src/auto_measure.py *)",
+      "Bash(python auto_measure.py *)",
+      "Bash(python tests/realdevice/*)",
+      "Bash(git push *)",
+      "PowerShell(python Traer5iAuto/src/auto_measure.py *)",
+      "PowerShell(python auto_measure.py *)",
+      "PowerShell(python tests/realdevice/*)",
+      "PowerShell(git push *)"
+    ]
+  }
+}
