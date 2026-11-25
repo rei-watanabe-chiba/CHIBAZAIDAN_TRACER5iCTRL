@@ -24,3 +24,6 @@ __pycache__/
 
 # Claude Code の個人設定
 .claude/settings.local.json
+
+# 他の機関の資料の一覧(手元だけに置く)
+明治大学黒輝石研究センター所蔵原産地資料借用一覧.csv
