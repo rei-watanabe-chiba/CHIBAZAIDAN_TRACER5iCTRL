@@ -4,6 +4,10 @@
 
 ## 2026-11-25
 
+### 整理: 見本に無い画面の控えを消す
+- 削除: `Traer5iAuto/config/new_screens/`(見本に無かった機器の画面 9 枚)。アプリは書き込むだけで読まない(次に見本に無い画面が出たら、また作られる)。
+- 変更: measure_logic_test が読んでいた描きかけのログイン画面(`c09cf0632953.png`)を `tests/fixtures/login_partial.png` へ移し、テストはそこから読むようにした(前は無ければ確認を飛ばしていた)。measure_logic_test 202/202 OK。
+
 ### 整理: フォルダを整理する
 - 整理: 資料(`PROTOCOL_55000.md`・`PROTOCOL_55100.md`・`LID_SENSOR.md`・`WEBVIEW_CHECK.md`・`messages_review.csv`)を `docs/` へ移した。
 - 整理: 控えと古いデータを `archive/`(git の外)にまとめた。`backup_tk_2026-11-20/` → `archive/backup_tk_2026-11-20/`、`buckup/Traer5iAuto/` → `archive/snapshot_2026-11-20/`、直下の `config/`・`TracerData/`(2026-11-09 分)→ `archive/data_2026-11-09/`。

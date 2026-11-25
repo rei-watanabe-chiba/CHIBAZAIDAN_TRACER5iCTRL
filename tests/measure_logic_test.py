@@ -992,8 +992,8 @@ def settle_tests():
     import screen_match
     lib = screen_match.library()
     scr = lambda f: lib.read(Image.open(os.path.join(ROOT, "screens", f)).convert("RGB"))
-    new = os.path.join(ROOT, "..", "config", "new_screens", "c09cf0632953.png")   # 実機で残った描きかけのログイン画面
-    partial = lib.read(Image.open(new).convert("RGB")) if os.path.exists(new) else None
+    new = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "login_partial.png")   # 実機で残った描きかけのログイン画面
+    partial = lib.read(Image.open(new).convert("RGB"))
 
     class Rc:
         def __init__(self, seq):
