@@ -172,14 +172,14 @@ try:
           rules.input_issues(["x"], [], None, False, "open") == [UI.INPUT_ISSUES["lid_open"], "x"]
           and rules.input_issues([], [], None, False, "none") == [UI.INPUT_ISSUES["lid_none"]]
           and rules.input_issues([], [], None, False, "closed") == [] and rules.input_issues([], [], None, False) == [])
-    check("蓋: 開いていればタイトルは「ガードキャップなし」、センサーなしは「センサー未接続」・ほかは「入力エラー」",
-          rules.issues_title(rules.input_issues(["x"], [], None, False, "open")) == UI.LBL_LID_OPEN == "ガードキャップなし"
+    check("蓋: 開いていればタイトルは「蓋なし」、センサーなしは「センサー未接続」・ほかは「入力エラー」",
+          rules.issues_title(rules.input_issues(["x"], [], None, False, "open")) == UI.LBL_LID_OPEN == "蓋なし"
           and rules.issues_title(rules.input_issues([], [], None, False, "none")) == UI.LBL_LID_NONE == "センサー未接続"
           and rules.issues_title(["x"]) == UI.LBL_INPUT_ERROR and rules.status_look(UI.LBL_INPUT_ERROR)["icon"] == "✕")
     # ---------------------------------------------------------------- 状態の欄のカテゴリー(2026-11-26)
     look = lambda t, c=None: (rules.status_look(t, c)["bg"], rules.status_look(t, c)["icon"])
     tone = lambda k: UI.TONES[UI.DEVICE_STATUS[k][0]]
-    check("状態の欄: 安全の注意(ガードキャップなし・センサー未接続・手動動作中)は黄の地に ⚠",
+    check("状態の欄: 安全の注意(蓋なし・センサー未接続・手動動作中)は黄の地に ⚠",
           look(UI.LBL_LID_OPEN) == look(UI.LBL_LID_NONE) == look("手動動作中", tone("trigger")) == (UI._YELLOW[0], "⚠"))
     check("状態の欄: 操作待ちは緑の地に ☞(ログイン待ち・安全確認待ち・結果画面・操作中)",
           all(look(UI.DEVICE_STATUS[k][1], tone(k)) == (UI._GREEN[0], "☞")

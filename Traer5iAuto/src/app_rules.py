@@ -82,7 +82,7 @@ def input_issues(mode_issues: list[str], empty: list[str], open_states: dict | N
 
 
 def issues_title(issues: list[str]) -> str:
-    """入力の不備があるときの状態の欄のタイトル: 蓋が開いていれば「ガードキャップなし」、センサーが無ければ「センサー未接続」、
+    """入力の不備があるときの状態の欄のタイトル: 蓋が開いていれば「蓋なし」、センサーが無ければ「センサー未接続」、
     ほかは「入力エラー」"""
     if UI.INPUT_ISSUES["lid_open"] in issues:
         return UI.LBL_LID_OPEN

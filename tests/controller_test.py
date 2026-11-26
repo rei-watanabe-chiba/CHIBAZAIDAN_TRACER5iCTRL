@@ -342,10 +342,10 @@ try:
     set_values(ID="L", subID="1")
     wait_for(lambda: btn() == ("start", True), 5)
     dg.LID.set("open")
-    check("蓋: 開くと「ガードキャップなし」「キャップとセンサーを確認してください」・「自動計測」は押せない",
+    check("蓋: 開くと「蓋なし」「蓋とセンサーを確認してください」・「自動計測」は押せない",
           wait_for(lambda: not btn()[1] and UI.INPUT_ISSUES["lid_open"] in detail() and title() == UI.LBL_LID_OPEN, 5), (btn(), title(), detail()))
     dg.LID.set("none")
-    check("蓋: センサーが無ければ「センサー未接続」「キャップセンサーを確認してください」・押せない",
+    check("蓋: センサーが無ければ「センサー未接続」「蓋センサーを確認してください」・押せない",
           wait_for(lambda: not btn()[1] and UI.INPUT_ISSUES["lid_none"] in detail() and title() == UI.LBL_LID_NONE, 5), (btn(), title(), detail()))
     dg.LID.set("closed")
     check("蓋: 閉じると「自動計測」を押せる", wait_for(lambda: btn() == ("start", True), 5), btn())
