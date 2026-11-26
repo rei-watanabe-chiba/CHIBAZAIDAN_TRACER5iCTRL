@@ -299,7 +299,7 @@ function setupSashes() {
 function renderHint(box, groups, ui) {
   box.replaceChildren(...groups.map(([target, items]) => {
     const g = el("span", { className: "grp" });
-    if (target) g.append(el("span", { className: "tag " + target, textContent: ui.HINT_TARGETS[target] }));
+    if (target) g.append(el("span", { className: "tag tag-" + target, textContent: ui.HINT_TARGETS[target] }));
     for (const [icon, text] of items) {
       const it = el("span", { className: "it" });
       it.append(el("i", { className: "ico " + icon }), text);
