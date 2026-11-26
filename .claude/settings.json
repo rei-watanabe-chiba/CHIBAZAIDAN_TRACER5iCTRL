@@ -7,6 +7,8 @@
       "Bash(python tests/web_smoke_test.py)",
       "Bash(python tests/run_changed.py)",
       "Bash(python tests/run_changed.py *)",
+      "Bash(python tests/web_smoke_test.py --window)",
+      "PowerShell(python tests/web_smoke_test.py --window)",
       "PowerShell(python tests/core_test.py)",
       "PowerShell(python tests/measure_logic_test.py)",
       "PowerShell(python tests/controller_test.py)",
