@@ -302,7 +302,7 @@ function renderHint(box, groups, ui) {
     if (target) g.append(el("span", { className: "tag tag-" + target, textContent: ui.HINT_TARGETS[target] }));
     for (const [icon, text] of items) {
       const it = el("span", { className: "it" });
-      it.append(el("i", { className: "ico " + icon }), text);
+      it.append(el("i", { className: "ico ico-" + icon }), text);
       g.append(it);
     }
     return g;
