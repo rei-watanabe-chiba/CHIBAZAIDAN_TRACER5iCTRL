@@ -175,7 +175,25 @@ try:
     check("蓋: 開いていればタイトルは「ガードキャップなし」、センサーなしは「センサー未接続」・ほかは「入力エラー」",
           rules.issues_title(rules.input_issues(["x"], [], None, False, "open")) == UI.LBL_LID_OPEN == "ガードキャップなし"
           and rules.issues_title(rules.input_issues([], [], None, False, "none")) == UI.LBL_LID_NONE == "センサー未接続"
-          and rules.issues_title(["x"]) == UI.LBL_INPUT_ERROR and rules.status_look(UI.LBL_LID_OPEN)["icon"] == "✕")
+          and rules.issues_title(["x"]) == UI.LBL_INPUT_ERROR and rules.status_look(UI.LBL_INPUT_ERROR)["icon"] == "✕")
+    # ---------------------------------------------------------------- 状態の欄のカテゴリー(2026-11-26)
+    look = lambda t, c=None: (rules.status_look(t, c)["bg"], rules.status_look(t, c)["icon"])
+    tone = lambda k: UI.TONES[UI.DEVICE_STATUS[k][0]]
+    check("状態の欄: 安全の注意(ガードキャップなし・センサー未接続・手動動作中)は黄の地に ⚠",
+          look(UI.LBL_LID_OPEN) == look(UI.LBL_LID_NONE) == look("手動動作中", tone("trigger")) == (UI._YELLOW[0], "⚠"))
+    check("状態の欄: 操作待ちは緑の地に ☞(ログイン待ち・安全確認待ち・結果画面・操作中)",
+          all(look(UI.DEVICE_STATUS[k][1], tone(k)) == (UI._GREEN[0], "☞")
+              for k in ("login", "login_nopass", "safety", "result", "busy", "busy_manual")))
+    check("状態の欄: 進行中は緑の地に ⌛(停止中も)",
+          all(look(t) == (UI._GREEN[0], "⌛") for t in ("切替中", "設定中", "取得中", "結果確認中", "停止中", "起動中")))
+    check("状態の欄: 止めた終わり方は赤の地に ■、不具合は ✕",
+          all(look(t) == (UI._RED[0], "■") for t in ("停止しました", UI.LID_END, "接続切れで停止"))
+          and all(look(t) == (UI._RED[0], "✕") for t in ("エラーで中断", "入力エラー", "接続切れ", "照射停止"))
+          and all(look(UI.DEVICE_STATUS[k][1], tone(k))[1] == "✕" for k in ("unknown", "offline", "error")))
+    check("状態の欄: 準備OK・完了は青の ✓、確認中は灰の ◌(機器の状態と測定の初めで同じ名前)・照射中は ☢",
+          look("完了") == look("準備OK", tone("ready")) == (UI._BLUE[0], "✓")
+          and UI.DEVICE_STATUS["checking"][1] == "状態確認中" and look("状態確認中") == (UI._GRAY[0], "◌")
+          and rules.status_look("照射中")["icon"] == "☢" and "待機中" not in UI.STATUS_COLORS)
     import lid_sensor as ls
     seen = []
     f = ls.Fixed(ls.OPEN)

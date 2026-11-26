@@ -53,7 +53,7 @@ def status_look(text: str, colors: tuple[str, str] | None = None) -> dict:
     ir = UI.IRRADIATING
     if text == ir["label"]:
         return {"bg": ir["bg"], "fg": ir["colors"][0], "icon": ir["icon"], "blink": list(ir["colors"]), "blink_ms": ir["blink_ms"]}
-    bg, fg = colors or UI.STATUS_COLORS.get(text, UI.STATUS_COLORS["待機中"])
+    bg, fg = colors or UI.STATUS_COLORS.get(text, UI.STATUS_COLORS["状態確認中"])
     return {"bg": bg, "fg": fg, "icon": UI.STATUS_TITLE_ICONS.get(text) or UI.STATUS_ICONS.get(bg, ""), "blink": None}
 
 
