@@ -95,7 +95,8 @@ CLI(`auto_measure.py`): `--check` / `--login` / `--switch-only "App"` / `--set-t
 | `*_core.py`・`app_rules.py` | `python tests/core_test.py` |
 | 測定の流れ | `python tests/measure_logic_test.py` |
 | `controller.py`・`device_core.py` | `python tests/controller_test.py`(2〜3 分) |
-| `web_app.py`・`web/` | `python tests/web_smoke_test.py`(約 1 分) |
+| `web/` | `python tests/web_smoke_test.py`(約 1 分。窓を後ろで開き、入力を奪わない。小窓などの窓の操作は飛ばす) |
+| `web_app.py`(窓の操作も) | `python tests/web_smoke_test.py --window`(約 1 分。窓を前に出し、小窓が数秒だけ常に前面になる。走らせる前にユーザーに知らせる) |
 
 **ふつうは `python tests/run_changed.py` で走らせる**(まだコミットしていない変更から上の表のとおりに選ぶ。`main` を付けると main からの変更も、`--all` で全部、`--list` で選ぶだけ)。テストは手元だけで走らせる。照射に関わらないテストと git の読み取りは `.claude/settings.json` で確認なしに許可し、`auto_measure.py` の CLI・`tests/realdevice/`・`git push` はいつも確認する。
 

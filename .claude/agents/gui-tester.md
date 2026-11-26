@@ -18,7 +18,8 @@ model: sonnet
 ## 進め方
 
 1. 変更に合わせて実行する(作業フォルダは TRACERexl):
-   - 画面(`web_app.py`・`web/`): `python tests/web_smoke_test.py`(約 1 分)
+   - 画面(`web/`): `python tests/web_smoke_test.py`(約 1 分。窓は後ろで開く。小窓などの窓の操作は飛ばす)
+   - `web_app.py`(窓の操作): `python tests/web_smoke_test.py --window`(約 1 分。窓が前に出る)
    - `controller.py`・`device_core.py`: `python tests/controller_test.py`(2〜3 分)
    - `*_core.py`・`app_rules.py`: `python tests/core_test.py`
    - 測定の流れ: `python tests/measure_logic_test.py`

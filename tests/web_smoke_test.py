@@ -1,8 +1,11 @@
 """WebView2 版の確認(機器に触れない・X線は出ない・本物の設定と台帳とログを書き換えない)。TRACERexl で実行する
 
-    python tests/web_smoke_test.py
+    python tests/web_smoke_test.py            ふつう(窓を後ろで開く)
+    python tests/web_smoke_test.py --window   窓の操作(小窓・最大化・最小化・常時前面)も確かめる
 
 窓を出して(1 分ほど)、画面に JavaScript を流したり画面のボタンを押したりして確かめ、閉じる。
+ふつうは窓を前に出さず(入力を奪わない)、ほかの窓の後ろで開く。作業の邪魔にならない。
+--window のときは本物の窓の動きを確かめるので、窓を前に出し、小窓が数秒だけ常に前面になる(その間は窓に触らない)。
 機器はデモ版と同じ偽の機器(tests/demo_device.py の DemoDevice・DemoOperator。画面は tests/fake_device.py。127.0.0.1)だけ。
 測定の流れ(auto_measure.run_plan)は本物を動かし、画面を読む・押す・トリガーの部分だけを偽の機器に置き換える。
 結果は1行ずつ OK / NG。NG が1つでもあれば終了コード 1
@@ -30,6 +33,7 @@ from fake_device import FakeDevice                          # noqa: E402
 from gui_config import UI                                   # noqa: E402
 
 results: list[bool] = []
+WINDOW = "--window" in sys.argv[1:]
 
 
 def hint_text(groups):
@@ -108,6 +112,22 @@ ctl_mod.fetch_measurements = lambda folder, nos, **k: (fetched.append(list(nos))
 dl.NOTE = lambda *_: None
 dl.AUTO_CONNECT = False
 
+if not WINDOW:                                               # 背面で走らせる: 窓を前に出さず、入力を奪わない
+    os.environ["WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS"] = (   # 後ろに隠れた窓でも描画・タイマーを遅らせない(遅らせると並べ方の確認が外れる)
+        "--disable-features=CalculateNativeWinOcclusion --disable-backgrounding-occluded-windows --disable-renderer-backgrounding")
+    import webview
+    _create = webview.create_window
+    webview.create_window = lambda *a, **k: _create(*a, **{**k, "focus": False})
+    _before = ctypes.windll.user32.GetForegroundWindow()     # テストを始めたときに前にあった窓(作業中の窓)
+
+    def _to_back(win):
+        """起動時に前へ出す代わりに一番後ろへ回し、入力を前の窓へ返す(WinForms は最初に出すとき窓を前に出してしまう)"""
+        u32 = ctypes.windll.user32
+        hwnd = ctypes.c_void_p(int(win.native.Handle.ToInt64()))
+        u32.SetWindowPos(hwnd, ctypes.c_void_p(1), 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010)    # HWND_BOTTOM(NOSIZE・NOMOVE・NOACTIVATE)
+        if _before and u32.IsWindow(_before):
+            u32.SetForegroundWindow(_before)
+    wa.bring_front = _to_back
 app = wa.WebApp(settings_path=settings)
 show = am.progress
 am.progress = lambda e, t: show(e * dev.speed, t)            # 照射の進みは速さに合わせる(デモ版と同じ)
@@ -441,129 +461,136 @@ def scenario(win):
         win.evaluate_js("pywebview.api.set_values({ID: 'T-2', subID: '1'})")
         wait_for(lambda: btn()[1] and btn()[0] == UI.MAIN_BUTTON["start"][0], 5)
         dev.speed = 1                                       # ゆっくり照射して停止を押す
-        # ---- 小窓: 最小化すると同じ窓を小さくし、状態の欄とボタンだけ。常時前面がオンなら小窓で最小化しない・オフなら最小化。
-        # 最大化で元の窓に戻す(小窓の位置を保存)。小窓のボタンで始めると、確かめる窓は元の窓に戻して出す
-        u32 = ctypes.windll.user32
-        hwnd = ctypes.c_void_p(int(app.window.native.Handle.ToInt64()))
-        iconic = lambda: bool(u32.IsIconic(hwnd))
-        zoomed = lambda: bool(u32.IsZoomed(hwnd))
-        topmost = lambda: bool(u32.GetWindowLongW(hwnd, -20) & 8)
-        shown = lambda sel: js(f"getComputedStyle(document.querySelector('{sel}')).display !== 'none'")
-        size0 = (app.window.width, app.window.height)
-        check("小窓: チェックの行に「最小化時に小窓にする」(既定はオン)", js("document.getElementById('mini-on').checked"))
-        app.window.minimize()
-        check("小窓: 最小化すると同じ窓が小窓になる(最小化しない・常時前面・状態の欄とボタンと「常時前面に表示する」だけ)",
-              wait_for(lambda: app.compact and js("document.body.classList.contains('compact')"), 20)
-              and wait_for(lambda: not iconic(), 5) and topmost() and app.window.width < size0[0] / 2
-              and shown("#status") and shown("#btn-main") and shown("#mini-top") and not shown("#right")
-              and not shown("#modes-pad") and not shown("#screen-wrap") and shown(".status-aside")
-              and js("document.getElementById('mini-top').checked"),
-              (app.compact, iconic(), topmost(), app.window.width, size0))
-        check("小窓: 枠をドラッグして大きさを変えられない(枠は固定)", not (u32.GetWindowLongW(hwnd, -16) & 0x40000))
-        min_box = lambda: bool(u32.GetWindowLongW(hwnd, -16) & 0x20000)   # WS_MINIMIZEBOX(窓を作り直すと hwnd が無効になり偽)
-        max_box = lambda: bool(u32.GetWindowLongW(hwnd, -16) & 0x10000)   # WS_MAXIMIZEBOX
-        check("小窓: 常時前面の間は最小化のボタンを押せない(最大化のボタンは押せる)", wait_for(lambda: not min_box(), 5) and max_box(),
-              (min_box(), max_box()))
-        time.sleep(0.8)
-        r0 = wt.RECT(); u32.GetWindowRect(hwnd, ctypes.byref(r0))
-        u32.MoveWindow(hwnd, r0.left + 100, r0.top + 80, 1600, 1200, True)   # Win + D の 2 回目のように外から大きさと位置を書き戻す
-        r1 = wt.RECT()
-        check("小窓: 外から大きさを変えられたら小窓の大きさと位置に戻す(Win + D を 2 回)",
-              wait_for(lambda: u32.GetWindowRect(hwnd, ctypes.byref(r1)) and (r1.left, r1.top, r1.right, r1.bottom)
-                       == (r0.left, r0.top, r0.right, r0.bottom), 5), ((r0.left, r0.top, r0.right, r0.bottom), (r1.left, r1.top, r1.right, r1.bottom)))
-        app.window.minimize()
-        check("小窓: 常時前面がオンなら、小窓で最小化を押しても小窓のまま", wait_for(lambda: not iconic() and app.compact, 5) and not iconic()
-              and (time.sleep(1) or not iconic()))
-        js("document.getElementById('mini-top').click()")
-        check("小窓: 「常時前面に表示する」を外すと前面でなくなり、保存する",
-              wait_for(lambda: storage.load_settings(settings).get("mini_on_top") is False, 5) and wait_for(lambda: not topmost(), 5))
-        check("小窓: 常時前面を外すと最小化のボタンを押せる", wait_for(min_box, 5) and bool(u32.IsWindow(hwnd)), min_box())
-        app.window.minimize()
-        check("小窓: 常時前面がオフなら、小窓で最小化を押すと最小化", wait_for(iconic, 5) and app.compact)
-        u32.ShowWindow(hwnd, 9)
-        check("小窓: 最小化から戻すと小窓のまま", wait_for(lambda: not iconic() and app.compact and not app.minimized, 5),
-              (iconic(), app.compact, app.minimized))
-        js("document.getElementById('mini-top').click()")
-        check("小窓: チェックし直すと常に前面で、最小化のボタンを押せない", wait_for(topmost, 5) and wait_for(lambda: not min_box(), 5), min_box())
-        u32.SetWindowPos(hwnd, None, 120, 90, 0, 0, 0x0001 | 0x0004 | 0x0010)        # 小窓を動かす(NOSIZE・NOZORDER・NOACTIVATE)
-        app.window.maximize()
-        check("小窓: 最大化を押すと元の窓に戻し(大きさ・最大化でない)、小窓の位置を保存する",
-              wait_for(lambda: not app.compact and not js("document.body.classList.contains('compact')"), 10)
-              and wait_for(lambda: (app.window.width, app.window.height) == size0, 5) and not zoomed() and not topmost()
-              and wait_for(lambda: storage.load_settings(settings).get("mini_pos") == [120, 90], 5),
-              (app.compact, (app.window.width, app.window.height), size0, zoomed(), storage.load_settings(settings).get("mini_pos")))
-        check("小窓: 元の窓に戻すと最小化のボタンを押せる", wait_for(min_box, 5), min_box())
-        app.window.minimize()
-        check("小窓: 次の小窓は保存した位置", wait_for(lambda: app.compact, 10)
-              and wait_for(lambda: (app.window.native.Left, app.window.native.Top) == (120, 90), 5),
-              (app.window.native.Left, app.window.native.Top))
-        # ---- タイトルバーのボタン(WM_SYSCOMMAND)では、最大化・最小化を経由せずに出入りする(縮む・広がるアニメーションを出さない)
-        seen = []
-        u32.PostMessageW(hwnd, 0x112, 0xF030, 0)                # SC_MAXIMIZE = 最大化のボタン
-        ok_full = wait_for(lambda: seen.append(zoomed()) or (not app.compact and not js("document.body.classList.contains('compact')")), 10)
-        check("小窓: 最大化のボタンで、最大化を経由せずに元の窓(大きさ)へ戻る",
-              ok_full and not any(seen) and wait_for(lambda: (app.window.width, app.window.height) == size0, 5),
-              (ok_full, any(seen), (app.window.width, app.window.height), size0))
-        seen = []
-        u32.PostMessageW(hwnd, 0x112, 0xF020, 0)                # SC_MINIMIZE = 最小化のボタン
-        ok_mini = wait_for(lambda: seen.append(iconic()) or app.compact, 10)
-        check("小窓: 最小化のボタンで、最小化を経由せずに小窓になる(同じ位置)",
-              ok_mini and not any(seen) and not iconic()
-              and wait_for(lambda: (app.window.native.Left, app.window.native.Top) == (120, 90), 5),
-              (ok_mini, any(seen), (app.window.native.Left, app.window.native.Top)))
-        # ---- 小窓のボタン: モード・画面はそれぞれ入り切り、「なし」は両方を切る。高さは中身に合わせ、中身は次の小窓でも同じ
-        mini_h = lambda: app.window.native.ClientSize.Height
-        mini_pick = lambda v: js(f"document.querySelector('#mini-views [data-view={v}]').click()")
-        mini_on = lambda: js("[...document.querySelectorAll('#mini-views .on')].map(b => b.dataset.view)")
-        row_fits = lambda: js("(() => { const r = document.querySelector('.mini-row'), v = document.getElementById('mini-views'),"
-                              " t = document.querySelector('.mini-row label'); return t.getBoundingClientRect().right <= v.getBoundingClientRect().left"
-                              " && v.getBoundingClientRect().right <= r.getBoundingClientRect().right + 0.5; })()")
-        fits = lambda: js("(() => { const s = document.getElementById('sidebar'); return s.scrollHeight <= s.clientHeight + 1; })()")
-        def mini_to(*parts):
-            return wait_for(lambda: storage.load_settings(settings).get("mini_view", []) == list(parts)
-                            and mini_on() == (list(parts) or ["none"]), 5) and (time.sleep(0.6) or True)
-        time.sleep(0.6)                              # 小窓になった直後の高さ合わせを待つ
-        h0 = mini_h()
-        mini_pick("modes")
-        ok1 = mini_to("modes") and shown("#modes-pad") and not shown("#screen-wrap") and fits()
-        h1 = mini_h()
-        mini_pick("screen")
-        ok2 = mini_to("modes", "screen") and shown("#modes-pad") and shown("#screen-wrap") and fits()
-        h2 = mini_h()
-        mini_flat = js("""(() => { const r = id => document.getElementById(id).getBoundingClientRect(), st = r('status'), sc = r('screen');
-            return st.left === 0 && st.top === 0 && Math.abs(st.right - document.body.getBoundingClientRect().right) <= 1
-              && getComputedStyle(document.getElementById('sidebar')).backgroundColor === 'rgb(255, 255, 255)'
-              && getComputedStyle(document.getElementById('left')).borderTopWidth === '0px'
-              && sc.bottom + 4 <= r('sidebar').bottom; })()""")
-        mini_pick("modes")
-        ok4 = mini_to("screen") and not shown("#modes-pad") and shown("#screen-wrap") and fits()
-        h4 = mini_h()
-        check("小窓: 「画面」だけ入れるとモード表は出さず、高さも本体画面の分だけ", ok4 and h0 < h4 < h2, (ok4, h0, h4, h2))
-        mini_pick("none")
-        ok3 = mini_to() and not shown("#modes-pad") and not shown("#screen-wrap") and fits()
-        h3 = mini_h()
-        check("小窓: 「モード」「画面」をそれぞれ入り切りでき、「なし」で両方消える。窓の高さが中身に合う",
-              ok1 and ok2 and ok3 and h0 < h1 < h2 and abs(h3 - h0) <= 2, (ok1, ok2, ok3, h0, h1, h2, h3))
-        check("小窓: カードだけ(周りの余白と枠なし)で、本体画面の下に余白がある", mini_flat)
-        check("小窓: 切り替えは「常時前面に表示する」と重ならず、今の形が選ばれて見える", row_fits() and mini_on() == ["none"], (row_fits(), mini_on()))
-        mini_pick("modes")
-        mini_to("modes")
-        app.window.maximize()
-        wait_for(lambda: not app.compact, 10)
-        app.window.minimize()
-        check("小窓: 次の小窓も前の形(モード表)で、高さも合う",
-              wait_for(lambda: app.compact, 10) and wait_for(lambda: abs(mini_h() - h1) <= 2, 5) and shown("#modes-pad"), (mini_h(), h1))
-        mini_pick("none")
-        mini_to()
-        js("document.getElementById('btn-main').click()")
-        check("小窓: ボタンで始めると元の窓に戻し、確かめる窓を出す",
-              wait_for(lambda: js("document.getElementById('confirm').open"), 10) and wait_for(lambda: not app.compact, 10)
-              and wait_for(lambda: (app.window.width, app.window.height) == size0, 5),
-              (app.compact, (app.window.width, app.window.height)))
-        js("document.getElementById('mini-on').click()")
-        check("小窓: 「最小化時に小窓にする」を外すと保存する",
-              wait_for(lambda: storage.load_settings(settings).get("mini_enabled") is False, 5))
-        js("document.getElementById('mini-on').click()")
+        if WINDOW:                                       # 窓の操作(小窓・最大化・常時前面)は --window のときだけ
+            # ---- 小窓: 最小化すると同じ窓を小さくし、状態の欄とボタンだけ。常時前面がオンなら小窓で最小化しない・オフなら最小化。
+            # 最大化で元の窓に戻す(小窓の位置を保存)。小窓のボタンで始めると、確かめる窓は元の窓に戻して出す
+            u32 = ctypes.windll.user32
+            hwnd = ctypes.c_void_p(int(app.window.native.Handle.ToInt64()))
+            iconic = lambda: bool(u32.IsIconic(hwnd))
+            zoomed = lambda: bool(u32.IsZoomed(hwnd))
+            topmost = lambda: bool(u32.GetWindowLongW(hwnd, -20) & 8)
+            shown = lambda sel: js(f"getComputedStyle(document.querySelector('{sel}')).display !== 'none'")
+            size0 = (app.window.width, app.window.height)
+            check("小窓: チェックの行に「最小化時に小窓にする」(既定はオン)", js("document.getElementById('mini-on').checked"))
+            app.window.minimize()
+            check("小窓: 最小化すると同じ窓が小窓になる(最小化しない・常時前面・状態の欄とボタンと「常時前面に表示する」だけ)",
+                  wait_for(lambda: app.compact and js("document.body.classList.contains('compact')"), 20)
+                  and wait_for(lambda: not iconic(), 5) and topmost() and app.window.width < size0[0] / 2
+                  and shown("#status") and shown("#btn-main") and shown("#mini-top") and not shown("#right")
+                  and not shown("#modes-pad") and not shown("#screen-wrap") and shown(".status-aside")
+                  and js("document.getElementById('mini-top').checked"),
+                  (app.compact, iconic(), topmost(), app.window.width, size0))
+            check("小窓: 枠をドラッグして大きさを変えられない(枠は固定)", not (u32.GetWindowLongW(hwnd, -16) & 0x40000))
+            min_box = lambda: bool(u32.GetWindowLongW(hwnd, -16) & 0x20000)   # WS_MINIMIZEBOX(窓を作り直すと hwnd が無効になり偽)
+            max_box = lambda: bool(u32.GetWindowLongW(hwnd, -16) & 0x10000)   # WS_MAXIMIZEBOX
+            check("小窓: 常時前面の間は最小化のボタンを押せない(最大化のボタンは押せる)", wait_for(lambda: not min_box(), 5) and max_box(),
+                  (min_box(), max_box()))
+            time.sleep(0.8)
+            r0 = wt.RECT(); u32.GetWindowRect(hwnd, ctypes.byref(r0))
+            u32.MoveWindow(hwnd, r0.left + 100, r0.top + 80, 1600, 1200, True)   # Win + D の 2 回目のように外から大きさと位置を書き戻す
+            r1 = wt.RECT()
+            check("小窓: 外から大きさを変えられたら小窓の大きさと位置に戻す(Win + D を 2 回)",
+                  wait_for(lambda: u32.GetWindowRect(hwnd, ctypes.byref(r1)) and (r1.left, r1.top, r1.right, r1.bottom)
+                           == (r0.left, r0.top, r0.right, r0.bottom), 5), ((r0.left, r0.top, r0.right, r0.bottom), (r1.left, r1.top, r1.right, r1.bottom)))
+            app.window.minimize()
+            check("小窓: 常時前面がオンなら、小窓で最小化を押しても小窓のまま", wait_for(lambda: not iconic() and app.compact, 5) and not iconic()
+                  and (time.sleep(1) or not iconic()))
+            js("document.getElementById('mini-top').click()")
+            check("小窓: 「常時前面に表示する」を外すと前面でなくなり、保存する",
+                  wait_for(lambda: storage.load_settings(settings).get("mini_on_top") is False, 5) and wait_for(lambda: not topmost(), 5))
+            check("小窓: 常時前面を外すと最小化のボタンを押せる", wait_for(min_box, 5) and bool(u32.IsWindow(hwnd)), min_box())
+            app.window.minimize()
+            check("小窓: 常時前面がオフなら、小窓で最小化を押すと最小化", wait_for(iconic, 5) and app.compact)
+            u32.ShowWindow(hwnd, 9)
+            check("小窓: 最小化から戻すと小窓のまま", wait_for(lambda: not iconic() and app.compact and not app.minimized, 5),
+                  (iconic(), app.compact, app.minimized))
+            js("document.getElementById('mini-top').click()")
+            check("小窓: チェックし直すと常に前面で、最小化のボタンを押せない", wait_for(topmost, 5) and wait_for(lambda: not min_box(), 5), min_box())
+            u32.SetWindowPos(hwnd, None, 120, 90, 0, 0, 0x0001 | 0x0004 | 0x0010)        # 小窓を動かす(NOSIZE・NOZORDER・NOACTIVATE)
+            app.window.maximize()
+            check("小窓: 最大化を押すと元の窓に戻し(大きさ・最大化でない)、小窓の位置を保存する",
+                  wait_for(lambda: not app.compact and not js("document.body.classList.contains('compact')"), 10)
+                  and wait_for(lambda: (app.window.width, app.window.height) == size0, 5) and not zoomed() and not topmost()
+                  and wait_for(lambda: storage.load_settings(settings).get("mini_pos") == [120, 90], 5),
+                  (app.compact, (app.window.width, app.window.height), size0, zoomed(), storage.load_settings(settings).get("mini_pos")))
+            check("小窓: 元の窓に戻すと最小化のボタンを押せる", wait_for(min_box, 5), min_box())
+            app.window.minimize()
+            check("小窓: 次の小窓は保存した位置", wait_for(lambda: app.compact, 10)
+                  and wait_for(lambda: (app.window.native.Left, app.window.native.Top) == (120, 90), 5),
+                  (app.window.native.Left, app.window.native.Top))
+            # ---- タイトルバーのボタン(WM_SYSCOMMAND)では、最大化・最小化を経由せずに出入りする(縮む・広がるアニメーションを出さない)
+            seen = []
+            u32.PostMessageW(hwnd, 0x112, 0xF030, 0)                # SC_MAXIMIZE = 最大化のボタン
+            ok_full = wait_for(lambda: seen.append(zoomed()) or (not app.compact and not js("document.body.classList.contains('compact')")), 10)
+            check("小窓: 最大化のボタンで、最大化を経由せずに元の窓(大きさ)へ戻る",
+                  ok_full and not any(seen) and wait_for(lambda: (app.window.width, app.window.height) == size0, 5),
+                  (ok_full, any(seen), (app.window.width, app.window.height), size0))
+            seen = []
+            u32.PostMessageW(hwnd, 0x112, 0xF020, 0)                # SC_MINIMIZE = 最小化のボタン
+            ok_mini = wait_for(lambda: seen.append(iconic()) or app.compact, 10)
+            check("小窓: 最小化のボタンで、最小化を経由せずに小窓になる(同じ位置)",
+                  ok_mini and not any(seen) and not iconic()
+                  and wait_for(lambda: (app.window.native.Left, app.window.native.Top) == (120, 90), 5),
+                  (ok_mini, any(seen), (app.window.native.Left, app.window.native.Top)))
+            # ---- 小窓のボタン: モード・画面はそれぞれ入り切り、「なし」は両方を切る。高さは中身に合わせ、中身は次の小窓でも同じ
+            mini_h = lambda: app.window.native.ClientSize.Height
+            mini_pick = lambda v: js(f"document.querySelector('#mini-views [data-view={v}]').click()")
+            mini_on = lambda: js("[...document.querySelectorAll('#mini-views .on')].map(b => b.dataset.view)")
+            row_fits = lambda: js("(() => { const r = document.querySelector('.mini-row'), v = document.getElementById('mini-views'),"
+                                  " t = document.querySelector('.mini-row label'); return t.getBoundingClientRect().right <= v.getBoundingClientRect().left"
+                                  " && v.getBoundingClientRect().right <= r.getBoundingClientRect().right + 0.5; })()")
+            fits = lambda: js("(() => { const s = document.getElementById('sidebar'); return s.scrollHeight <= s.clientHeight + 1; })()")
+            def mini_to(*parts):
+                return wait_for(lambda: storage.load_settings(settings).get("mini_view", []) == list(parts)
+                                and mini_on() == (list(parts) or ["none"]), 5) and (time.sleep(0.6) or True)
+            time.sleep(0.6)                              # 小窓になった直後の高さ合わせを待つ
+            h0 = mini_h()
+            mini_pick("modes")
+            ok1 = mini_to("modes") and shown("#modes-pad") and not shown("#screen-wrap") and fits()
+            h1 = mini_h()
+            mini_pick("screen")
+            ok2 = mini_to("modes", "screen") and shown("#modes-pad") and shown("#screen-wrap") and fits()
+            h2 = mini_h()
+            mini_flat = js("""(() => { const r = id => document.getElementById(id).getBoundingClientRect(), st = r('status'), sc = r('screen');
+                return st.left === 0 && st.top === 0 && Math.abs(st.right - document.body.getBoundingClientRect().right) <= 1
+                  && getComputedStyle(document.getElementById('sidebar')).backgroundColor === 'rgb(255, 255, 255)'
+                  && getComputedStyle(document.getElementById('left')).borderTopWidth === '0px'
+                  && sc.bottom + 4 <= r('sidebar').bottom; })()""")
+            mini_pick("modes")
+            ok4 = mini_to("screen") and not shown("#modes-pad") and shown("#screen-wrap") and fits()
+            h4 = mini_h()
+            check("小窓: 「画面」だけ入れるとモード表は出さず、高さも本体画面の分だけ", ok4 and h0 < h4 < h2, (ok4, h0, h4, h2))
+            mini_pick("none")
+            ok3 = mini_to() and not shown("#modes-pad") and not shown("#screen-wrap") and fits()
+            h3 = mini_h()
+            check("小窓: 「モード」「画面」をそれぞれ入り切りでき、「なし」で両方消える。窓の高さが中身に合う",
+                  ok1 and ok2 and ok3 and h0 < h1 < h2 and abs(h3 - h0) <= 2, (ok1, ok2, ok3, h0, h1, h2, h3))
+            check("小窓: カードだけ(周りの余白と枠なし)で、本体画面の下に余白がある", mini_flat)
+            check("小窓: 切り替えは「常時前面に表示する」と重ならず、今の形が選ばれて見える", row_fits() and mini_on() == ["none"], (row_fits(), mini_on()))
+            mini_pick("modes")
+            mini_to("modes")
+            app.window.maximize()
+            wait_for(lambda: not app.compact, 10)
+            app.window.minimize()
+            check("小窓: 次の小窓も前の形(モード表)で、高さも合う",
+                  wait_for(lambda: app.compact, 10) and wait_for(lambda: abs(mini_h() - h1) <= 2, 5) and shown("#modes-pad"), (mini_h(), h1))
+            mini_pick("none")
+            mini_to()
+            js("document.getElementById('btn-main').click()")
+            check("小窓: ボタンで始めると元の窓に戻し、確かめる窓を出す",
+                  wait_for(lambda: js("document.getElementById('confirm').open"), 10) and wait_for(lambda: not app.compact, 10)
+                  and wait_for(lambda: (app.window.width, app.window.height) == size0, 5),
+                  (app.compact, (app.window.width, app.window.height)))
+            js("document.getElementById('mini-on').click()")
+            check("小窓: 「最小化時に小窓にする」を外すと保存する",
+                  wait_for(lambda: storage.load_settings(settings).get("mini_enabled") is False, 5))
+            js("document.getElementById('mini-on').click()")
+        else:                                            # 小窓を確かめないときは、ふつうに始めて確かめる窓を出す
+            js("document.getElementById('btn-main').click()")
+            wait_for(lambda: js("document.getElementById('confirm').open"), 10)
+            fg = ctypes.windll.user32.GetForegroundWindow()
+            check("背面: テストの窓は前に出ず、入力を奪わない(確かめる窓を出しても)",
+                  fg != int(app.window.native.Handle.ToInt64()), fg)
         js("document.querySelector('#confirm .checks input').click(); document.querySelector('#confirm .ok').click()")
         check("停止: 照射中になると押せる", wait_for(lambda: title() == UI.IRRADIATING["label"] and btn()[1], 20), (title(), btn()))
         js("document.getElementById('btn-main').click()")

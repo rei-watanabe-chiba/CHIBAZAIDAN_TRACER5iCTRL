@@ -2,11 +2,13 @@
 
     python tests/run_changed.py            まだコミットしていない変更(未追跡のファイルも)から選ぶ
     python tests/run_changed.py main       main から今までの変更(コミット済みも)と、まだコミットしていない変更から選ぶ
-    python tests/run_changed.py --all      4 つとも走らせる
+    python tests/run_changed.py --all      全部走らせる(web は窓の操作も含めて = window)
     python tests/run_changed.py --list     選ぶだけで走らせない
 
 選び方は CLAUDE.md の「テスト」の表と同じ(RULES)。どれにも当てはまらない src のファイルは core・logic・controller を走らせる。
 資料(docs/・*.md)だけの変更では何も走らせない。結果は 1 つでも NG なら終了コード 1。
+web は窓を後ろで開き(作業の邪魔をしない)、窓の操作(小窓・最大化・常時前面)を飛ばす。window は窓を前に出して全部を確かめる
+(web の確認も含むので、両方が選ばれたら window だけ走らせる)。window を選ぶのは web_app.py を変えたときだけ。
 """
 from __future__ import annotations
 
@@ -21,9 +23,10 @@ TESTS = {
     "logic": "tests/measure_logic_test.py",
     "controller": "tests/controller_test.py",
     "web": "tests/web_smoke_test.py",
+    "window": "tests/web_smoke_test.py --window",
 }
 ALL = tuple(TESTS)
-RETRY_ONCE = {"web"}     # 本物の窓を動かすので、まれに間合いで外れる(2026-11-25: 段の境目・小窓の最大化で 1 回ずつ)。ほかは決まった結果なので走らせ直さない
+RETRY_ONCE = {"web", "window"}     # 本物の窓を動かすので、まれに間合いで外れる(2026-11-25: 段の境目・小窓の最大化で 1 回ずつ)。ほかは決まった結果なので走らせ直さない
 SRC = r"Traer5iAuto/src/"
 
 # (正規表現, テスト) を上から見て、最初に当てはまったものを使う
@@ -35,7 +38,8 @@ RULES = [
     (SRC + r"(auto_measure|device_link|lid_sensor)\.py$", ("logic", "controller")),
     (SRC + r"(screen_match|instrument_files|screen_ui|shutdown)\.py$", ("logic",)),
     (SRC + r"screens/", ("logic",)),
-    (SRC + r"(web_app\.py$|web/)", ("web",)),
+    (SRC + r"web_app\.py$", ("window",)),
+    (SRC + r"web/", ("web",)),
     (SRC, ("core", "logic", "controller")),
     (r"tests/(core|measure_logic|controller|web_smoke)_test\.py$", None),   # そのテスト自身
     (r"tests/(demo_device|fake_device)\.py$", ("logic", "controller", "web")),
@@ -71,13 +75,15 @@ def pick(files: list[str]) -> dict[str, list[str]]:
                 for t in tests or (SELF[m.group(1)],):
                     why.setdefault(t, []).append(f)
                 break
+    if "window" in why and "web" in why:                 # window は web の確認も含む
+        why["window"] += why.pop("web")
     return {t: why[t] for t in ALL if t in why}
 
 
 def run(name: str) -> bool:
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
     t0 = time.monotonic()
-    out = subprocess.run([sys.executable, TESTS[name]], cwd=ROOT, capture_output=True,
+    out = subprocess.run([sys.executable, *TESTS[name].split()], cwd=ROOT, capture_output=True,
                          env=env, creationflags=NO_WINDOW)
     text = (out.stdout + out.stderr).decode("utf-8", errors="replace")
     lines = [l for l in text.splitlines() if l.strip()]
@@ -95,7 +101,7 @@ def main(argv: list[str]) -> int:
     flags = {a for a in argv if a.startswith("--")}
     base = next((a for a in argv if not a.startswith("--")), None)
     if "--all" in flags:
-        chosen = {t: ["--all"] for t in ALL}
+        chosen = {t: ["--all"] for t in ALL if t != "web"}
     else:
         files = changed(base)
         if not files:

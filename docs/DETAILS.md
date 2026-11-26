@@ -71,7 +71,7 @@ TRACERexl/                  開発用(このフォルダ)
 | `src/instrument_files.py` | 機器(TCP 55000)のファイル一覧・ダウンロード。読み取り専用。`list` / `get` / `fetch 723,724`(測定した分の取り込み) |
 | `tests/core_test.py`(TRACERexl 直下) | 画面を持たない処理(`*_core.py`・`app_rules.py`)の確認。Tk を読み込まない。`python tests/core_test.py` |
 | `tests/controller_test.py`(TRACERexl 直下) | 決まりの確認(窓を出さずに `Controller` と `DeviceWatch` を直接動かす。画面の側は記録するだけの偽物。偽の機器(`tests/demo_device.py`)で本物の測定の流れを照射なしで動かす)。`python tests/controller_test.py`(2〜3 分) |
-| `tests/web_smoke_test.py`(TRACERexl 直下) | 画面の確認(窓を出して JavaScript を流し、画面のボタンを押す。偽の機器(`demo_device.DemoDevice` / `DemoOperator`)で本物の測定の流れを照射なしで動かす。一時フォルダだけ)。`python tests/web_smoke_test.py`(約 1 分) |
+| `tests/web_smoke_test.py`(TRACERexl 直下) | 画面の確認(窓を出して JavaScript を流し、画面のボタンを押す。偽の機器(`demo_device.DemoDevice` / `DemoOperator`)で本物の測定の流れを照射なしで動かす。一時フォルダだけ)。`python tests/web_smoke_test.py`(約 1 分)。ふつうは窓を後ろで開き(`focus=False`・起動時に一番後ろへ回して入力を前の窓へ返す・隠れた窓でも WebView2 の描画を遅らせない)、窓の操作(小窓・最大化・最小化・常時前面)を飛ばす。`--window` を付けると窓を前に出して全部を確かめる(本物の窓の動きが要るので背面ではできない。2026-11-25 ユーザーの判断で分けた) |
 | `tests/fake_device.py`(TRACERexl 直下) | テスト用の偽の機器(PC の中のサーバー。画面・トリガーの状態・命令の返事を PROTOCOL_55100 の形で返す) |
 | `tests/measure_logic_test.py`(TRACERexl 直下) | 測定の終了判定・機器の時間の読み取り・ずれの判定・取り込みの確認(偽の Operator・偽の機器・仮想の時計)。`python tests/measure_logic_test.py` |
 | `config/gui_settings.json` | GUI 設定(測定モード、ウィンドウ位置、管理簿の列幅、資料一覧の CSV と列の割り当て、PASS(`pass`、暗号化しない)) |
@@ -267,7 +267,7 @@ CLI(`auto_measure.py`):
 - **台帳の保存**: 正本 `config/ledger.json` と保存先の File.csv を一時ファイル経由で書き直す(`write_atomic`)。失敗したとき(Excel で開いている等)は「⚠未保存」、次の変更で書き直す。
 - **デッドコードは残さない**: 使わなくなった処理・`UI` の値は削除する(2026-11-20: Tk 版だけが使っていた `UI` の値 48 個を消した)。
 - **処理と画面を分ける**: 決まりは `controller.py`・`device_core.py`・`*_core.py`・`app_rules.py`(画面を持たない)に書き、`web/` は映して操作を返すだけにする。決まりを足すときはそちらに足し、テストに確認項目を足す。
-- **テスト**: 処理(`*_core.py`・`app_rules.py`)を変えたら `python tests/core_test.py`、測定の流れを変えたら `python tests/measure_logic_test.py`、`controller.py`・`device_core.py` を変えたら `python tests/controller_test.py`、画面(`web_app.py`・`web/`)を変えたら `python tests/web_smoke_test.py`(どれも TRACERexl で実行)。新しい挙動には確認項目を足す。テストは偽の機器(`tests/demo_device.py`・`tests/fake_device.py`)・偽の蓋のセンサー・一時フォルダだけを使い、本物の機器・設定・台帳に触れない。テスト中に出た確認ダイアログを人が押すと結果が変わりうるので、テストはボタンや API を直接操作して判定する。
+- **テスト**: 処理(`*_core.py`・`app_rules.py`)を変えたら `python tests/core_test.py`、測定の流れを変えたら `python tests/measure_logic_test.py`、`controller.py`・`device_core.py` を変えたら `python tests/controller_test.py`、画面(`web/`)を変えたら `python tests/web_smoke_test.py`、`web_app.py` を変えたら `python tests/web_smoke_test.py --window`(どれも TRACERexl で実行)。新しい挙動には確認項目を足す。テストは偽の機器(`tests/demo_device.py`・`tests/fake_device.py`)・偽の蓋のセンサー・一時フォルダだけを使い、本物の機器・設定・台帳に触れない。テスト中に出た確認ダイアログを人が押すと結果が変わりうるので、テストはボタンや API を直接操作して判定する。
 - 見た目を確かめるときは、アプリの窓だけを `PrintWindow` で撮る(ほかの窓・画面全体を撮らない)。見たら画像は消す。
 
 ## git(2026-11-25〜)
