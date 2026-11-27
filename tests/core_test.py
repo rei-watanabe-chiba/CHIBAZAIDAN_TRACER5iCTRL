@@ -184,8 +184,8 @@ try:
     check("状態の欄: 操作待ちは緑の地に ☞(ログイン待ち・安全確認待ち・結果画面・操作中)",
           all(look(UI.DEVICE_STATUS[k][1], tone(k)) == (UI._GREEN[0], "☞")
               for k in ("login", "login_nopass", "safety", "result", "busy", "busy_manual")))
-    check("状態の欄: 進行中は緑の地に ⌛(停止中も)",
-          all(look(t) == (UI._GREEN[0], "⌛") for t in ("切替中", "設定中", "取得中", "結果確認中", "停止中", "起動中")))
+    check("状態の欄: 進行中は緑の地に砂時計の線の絵(停止中も)",
+          all(look(t) == (UI._GREEN[0], "ico-hourglass") for t in ("切替中", "設定中", "取得中", "結果確認中", "停止中", "起動中")))
     check("状態の欄: 止めた終わり方は赤の地に ■、不具合は ✕",
           all(look(t) == (UI._RED[0], "■") for t in ("停止しました", UI.LID_END, "接続切れで停止"))
           and all(look(t) == (UI._RED[0], "✕") for t in ("エラーで中断", "入力エラー", "接続切れ", "照射停止"))

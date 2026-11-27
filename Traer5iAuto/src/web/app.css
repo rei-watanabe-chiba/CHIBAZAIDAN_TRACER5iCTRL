@@ -41,6 +41,7 @@ body.compact .pad { padding: var(--INNER_GAP) var(--SIDEBAR_PAD); }
           height: calc(1.45em * var(--STATUS_LINES-n) + 1.7em + var(--status-pad-y, 6px) * 2 + 2px); overflow: hidden; }
 .status-main { flex: var(--split-l, 11) 1 0; min-width: 0; }
 .status-main b { display: block; font-family: var(--FONT_SEMIBOLD), var(--FONT_FAMILY); font-weight: 600; font-size: 15px; line-height: 1.6em; white-space: nowrap; }
+.status-main b .ico { width: .95em; height: .95em; margin-right: .3em; vertical-align: -.1em; background: currentColor; }   /* 線の絵の記号(色は字と同じ。照射中の明滅にも付いていく) */
 #status-detail { white-space: pre-line; line-height: 1.45em; overflow: hidden; max-height: calc(1.45em * var(--STATUS_LINES-n)); }
 .status-line { width: 1px; margin: 0 var(--status-pad-x, 10px); background: currentColor; opacity: .25; }
 .status-aside { flex: var(--split-r, 9) 1 0; min-width: 0; line-height: 1.45em; }
@@ -133,6 +134,7 @@ button.main:disabled { cursor: default; }
 .ico-edit { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L18.5 9.5a2.83 2.83 0 0 0-4-4L4 16v4M13.5 6.5l4 4'/%3E%3C/svg%3E"); }
 .ico-menu { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h16'/%3E%3C/svg%3E"); }
 .ico-multi { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 5.5L5 7l2.5-2.5M3.5 11.5L5 13l2.5-2.5M3.5 17.5L5 19l2.5-2.5M11 6h9M11 12h9M11 18h9'/%3E%3C/svg%3E"); }
+.ico-hourglass { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2'/%3E%3C/svg%3E"); }
 
 /* 計測ファイル: 白いカード・1 項目 1 行・必須の印・資料一覧で割り当てた列の名前 */
 .info-badge { font-size: 11px; border-radius: 4px; padding: 0 6px; }

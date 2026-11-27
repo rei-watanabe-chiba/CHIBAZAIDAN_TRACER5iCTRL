@@ -6,7 +6,9 @@ let blink = null;
 app.on("status", s => {
   const box = $("status");
   box.style.background = s.bg; box.style.color = s.fg;
-  $("status-title").textContent = s.icon ? `${s.icon} ${s.title}` : s.title;
+  const t = $("status-title");                      // 記号: 「ico-…」は線の絵(app.css)、ほかは文字
+  if (s.icon && s.icon.startsWith("ico-")) t.replaceChildren(el("i", { className: "ico " + s.icon }), s.title);
+  else t.textContent = s.icon ? `${s.icon} ${s.title}` : s.title;
   clearInterval(blink); blink = null;
   $("status-title").style.color = "";
   if (s.blink) {
